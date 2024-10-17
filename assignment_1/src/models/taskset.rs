@@ -1,5 +1,6 @@
 use super::{Job, Task};
 
+#[derive(Debug)]
 pub struct TaskSet {
 	tasks: Vec<Task>,
 }

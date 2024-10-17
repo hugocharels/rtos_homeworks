@@ -1,6 +1,7 @@
 mod arg_parser;
 mod models;
 mod schedulers;
+mod taskset_parser;
 
 fn main() {
 	let matches = arg_parser::get_arg_parser().get_matches();
@@ -13,4 +14,8 @@ fn main() {
 		println!("Verbose mode is enabled");
 	}
 	println!("Task set file: {}", taskset_file);
+
+	// Read the task set from the file
+	let taskset = taskset_parser::read_taskset_from_file(taskset_file);
+	println!("Task set loaded: {:?}", taskset);
 }

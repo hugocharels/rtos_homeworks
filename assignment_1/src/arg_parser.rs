@@ -1,15 +1,14 @@
 use clap::{Arg, Command};
 
-
 pub(crate) fn get_arg_parser() -> Command {
 	Command::new("Scheduler")
 		.about("Task scheduler with various algorithms")
 		.arg(
 			Arg::new("scheduling algorithm")
-				.help("Specify the scheduling algorithm: audsley, edf, or rr")
+				.help("Specify the scheduling algorithm: dm, edf, or rr")
 				.required(true)
 				.index(1)
-				.value_parser(["audsley", "edf", "rr"]),
+				.value_parser(["dm", "edf", "rr"]),
 		)
 		.arg(
 			Arg::new("verbose")
