@@ -1,5 +1,6 @@
 mod parser;
 mod models;
+mod schedulers;
 
 fn main() {
 	let matches = parser::get_parser().get_matches();
