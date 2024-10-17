@@ -1,4 +1,5 @@
 use crate::models::TaskSet;
+use crate::schedulers::result::SchedulabilityResult;
 use super::strategy::SchedulerStrategy;
 
 pub struct SchedulerContext<'a> {
@@ -18,7 +19,7 @@ impl<'a> SchedulerContext<'a> {
 		self.strategy = Some(strategy);
 	}
 
-	pub fn check_schedulability(&self) -> bool {
+	pub fn check_schedulability(&self) -> SchedulabilityResult {
 		match self.strategy {
 			Some(strategy) => strategy.is_schedulable(&self.task_set),
 			None => panic!("No strategy set!"),
