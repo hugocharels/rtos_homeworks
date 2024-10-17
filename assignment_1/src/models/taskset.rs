@@ -16,6 +16,10 @@ impl TaskSet {
 			.filter_map(|t| t.spawn_job(current_time))
 			.collect()
 	}
+
+	pub fn system_utilization(&self) -> f64 {
+		self.tasks.iter().map(|t| t.utilization()).sum()
+	}
 }
 
 #[cfg(test)]

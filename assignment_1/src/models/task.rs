@@ -45,6 +45,10 @@ impl Task {
 		))
 	}
 
+	pub fn utilization(&self) -> f64 {
+		self.wcet as f64 / self.period as f64
+	}
+
 	pub fn period(&self) -> TimeStep {
 		self.period
 	}
