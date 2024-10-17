@@ -1,6 +1,6 @@
+use crate::models::{Task, TaskSet, TimeStep};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use crate::models::{Task, TaskSet, TimeStep};  // Assuming Task and TaskSet are defined in models
 
 pub(crate) fn read_taskset_from_file(file_path: &str) -> TaskSet {
 	let file = File::open(file_path).expect("Unable to open file");

@@ -1,3 +1,5 @@
+use crate::schedulers::SchedulerStrategy;
+
 mod arg_parser;
 mod models;
 mod schedulers;
@@ -18,4 +20,25 @@ fn main() {
 	// Read the task set from the file
 	let taskset = taskset_parser::read_taskset_from_file(taskset_file);
 	println!("Task set loaded: {:?}", taskset);
+
+	// Check if the task set is schedulable
+	let mut context = schedulers::SchedulerContext::new(taskset);
+	let strategy: Option<Box<dyn SchedulerStrategy>> = match scheduling_algorithm.as_str() {
+		"dm" => Some(Box::new(schedulers::dm::DM) as Box<dyn SchedulerStrategy>),
+		"edf" => Some(Box::new(schedulers::edf::EDF) as Box<dyn SchedulerStrategy>),
+		"rr" => Some(Box::new(schedulers::round_robin::RoundRobin) as Box<dyn SchedulerStrategy>),
+		_ => None,
+	};
+
+	if strategy.is_none() {
+		println!("Invalid scheduling algorithm: {}", scheduling_algorithm);
+		std::process::exit(1);
+	}
+
+	let strategy = strategy.unwrap();
+	context.set_strategy(strategy.as_ref());
+	let result = context.check_schedulability();
+	println!("Schedulability result: {:?}", result);
+
+	std::process::exit(result as i32);
 }

@@ -1,6 +1,6 @@
+use super::strategy::SchedulerStrategy;
 use crate::models::TaskSet;
 use crate::schedulers::result::SchedulabilityResult;
-use super::strategy::SchedulerStrategy;
 
 pub struct SchedulerContext<'a> {
 	strategy: Option<&'a dyn SchedulerStrategy>,  // Strategy can be set later

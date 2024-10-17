@@ -1,6 +1,9 @@
-mod context;
+pub mod context;
 mod strategy;
-mod dm;
-mod edf;
-mod round_robin;
-mod result;
+pub mod dm;
+pub mod edf;
+pub mod round_robin;
+pub mod result;
+
+pub use context::SchedulerContext;
+pub use strategy::SchedulerStrategy;
