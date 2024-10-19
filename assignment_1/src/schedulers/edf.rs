@@ -7,8 +7,8 @@ pub struct EDF;
 impl SchedulerStrategy for EDF {
 	fn is_schedulable(&self, task_set: &TaskSet) -> SchedulabilityResult {
 		match task_set.system_utilization() <= 1.0 {
-		    true => SchedulabilityResult::SchedulableShortcut,
-		    false => SchedulabilityResult::UnschedulableShortcut,
+			true => SchedulabilityResult::SchedulableShortcut,
+			false => SchedulabilityResult::UnschedulableShortcut,
 		}
 	}
 }

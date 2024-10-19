@@ -20,6 +20,10 @@ impl TaskSet {
 	pub fn system_utilization(&self) -> f64 {
 		self.tasks.iter().map(|t| t.utilization()).sum()
 	}
+
+	pub fn size(&self) -> usize {
+		self.tasks.len()
+	}
 }
 
 #[cfg(test)]

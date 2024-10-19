@@ -1,3 +1,4 @@
+use crate::schedulers::result::SchedulabilityResult;
 use crate::schedulers::SchedulerStrategy;
 
 mod arg_parser;
@@ -32,7 +33,7 @@ fn main() {
 
 	if strategy.is_none() {
 		println!("Invalid scheduling algorithm: {}", scheduling_algorithm);
-		std::process::exit(1);
+		std::process::exit(SchedulabilityResult::Unknown as i32);
 	}
 
 	let strategy = strategy.unwrap();

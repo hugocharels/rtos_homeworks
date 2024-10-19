@@ -7,7 +7,12 @@ pub struct RoundRobin;
 
 impl SchedulerStrategy for RoundRobin {
 	fn is_schedulable(&self, task_set: &TaskSet) -> SchedulabilityResult {
-		// Round Robin-specific schedulability logic here
+		if task_set.system_utilization() > 1.0 {
+			return SchedulabilityResult::UnschedulableShortcut;
+		}
+
+		// TODO: Simulate feasibility interval
+
 		SchedulabilityResult::Unknown
 	}
 }
