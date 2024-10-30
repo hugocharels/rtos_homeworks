@@ -1,5 +1,7 @@
-use crate::schedulers::result::SchedulabilityResult;
-use crate::schedulers::SchedulerStrategy;
+use crate::schedulers::{
+	result::SchedulabilityResult,
+	SchedulerStrategy,
+};
 
 mod arg_parser;
 mod models;

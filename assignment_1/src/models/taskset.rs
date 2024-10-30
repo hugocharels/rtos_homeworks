@@ -1,6 +1,6 @@
 use super::{Job, Task};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TaskSet {
 	tasks: Vec<Task>,
 }
@@ -24,6 +24,14 @@ impl TaskSet {
 	pub fn size(&self) -> usize {
 		self.tasks.len()
 	}
+
+	pub fn hyperperiod(&self) -> u32 {
+		self.tasks.iter().map(|t| t.deadline()).max().unwrap()
+	}
+
+	pub fn tasks(&self) -> &Vec<Task> {
+		&self.tasks
+	}
 }
 
 #[cfg(test)]
@@ -36,7 +44,7 @@ mod tests {
 	fn test_taskset() {
 		let tasks = vec![Task::new(0, 0, 10, 20, 50), Task::new(1, 0, 20, 40, 40)];
 		let mut ts = TaskSet::new(tasks);
-		assert!(ts.release_jobs(0).len() == 2);
+		assert_eq!(ts.release_jobs(0).len(), 2);
 		assert!(ts.release_jobs(3).is_empty());
 	}
 }

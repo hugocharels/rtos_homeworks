@@ -1,10 +1,12 @@
 use super::strategy::SchedulerStrategy;
-use crate::models::TaskSet;
-use crate::schedulers::result::SchedulabilityResult;
+use crate::{
+	models::TaskSet,
+	schedulers::result::SchedulabilityResult,
+};
 
 pub struct SchedulerContext<'a> {
 	strategy: Option<&'a dyn SchedulerStrategy>,  // Strategy can be set later
-	task_set: TaskSet,  // TaskSet is an attribute of the context
+	task_set: TaskSet,  // &self, TaskSet is an attribute of the context
 }
 
 impl<'a> SchedulerContext<'a> {
@@ -21,7 +23,7 @@ impl<'a> SchedulerContext<'a> {
 
 	pub fn check_schedulability(&self) -> SchedulabilityResult {
 		match self.strategy {
-			Some(strategy) => strategy.is_schedulable(&self.task_set),
+			Some(strategy) => strategy.is_schedulable(&mut self.task_set.clone()),
 			None => panic!("No strategy set!"),
 		}
 	}

@@ -49,16 +49,20 @@ impl Task {
 		self.wcet as f64 / self.period as f64
 	}
 
-	pub fn period(&self) -> TimeStep {
-		self.period
-	}
-
 	pub fn id(&self) -> u32 {
 		self.id
 	}
 
 	pub fn wcet(&self) -> TimeStep {
 		self.wcet
+	}
+
+	pub fn deadline(&self) -> TimeStep {
+		self.deadline
+	}
+
+	pub fn period(&self) -> TimeStep {
+		self.period
 	}
 }
 

@@ -1,6 +1,6 @@
 use clap::{Arg, Command};
 
-pub(crate) fn get_arg_parser() -> Command {
+pub fn get_arg_parser() -> Command {
 	Command::new("Scheduler")
 		.about("Task scheduler with various algorithms")
 		.arg(

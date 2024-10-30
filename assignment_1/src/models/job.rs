@@ -49,9 +49,9 @@ mod test {
 	fn schedule() {
 		let mut task = Task::new(0, 0, 10, 30, 30);
 		let mut j = task.spawn_job(0).unwrap();
-		assert!(j.remaining_time() == 10);
+		assert_eq!(j.remaining_time(), 10);
 		j.schedule(1);
-		assert!(j.remaining_time() == 9);
+		assert_eq!(j.remaining_time(), 9);
 	}
 
 	#[test]
