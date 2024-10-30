@@ -17,7 +17,7 @@ pub fn read_taskset_from_file(file_path: &str) -> TaskSet {
 			if values.len() != 4 {
 				panic!("Each line must have exactly 4 values: offset, wcet, deadline, period");
 			}
-			Task::new(id as TimeStep, values[0], values[1], values[2], values[3])
+			Task::new(id as u32, values[0], values[1], values[2], values[3])
 		})
 		.collect();
 

@@ -1,5 +1,5 @@
 use crate::{
-	models::{Job, TaskSet, TimeStep},
+	models::{Job, TaskSet},
 	schedulers::errors::SchedulingError,
 	schedulers::result::SchedulabilityResult,
 };
@@ -8,11 +8,11 @@ pub trait SchedulerStrategy {
 	fn is_schedulable(&self, task_set: &mut TaskSet) -> SchedulabilityResult;
 
 	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
-		None
+		todo!("Make another trait to avoid code duplication and this method");
 	}
 
-	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		TimeStep::MAX
+	fn t_max(&self, task_set: &TaskSet) -> u64 {
+		todo!("Make another trait to avoid code duplication and this method");
 	}
 
 	fn simulate(&self, task_set: &mut TaskSet) -> Result<(), SchedulingError> {

@@ -1,4 +1,4 @@
-use super::{Job, Task};
+use super::{Job, Task, TimeStep};
 
 #[derive(Clone, Debug)]
 pub struct TaskSet {
@@ -10,7 +10,7 @@ impl TaskSet {
 		Self { tasks }
 	}
 
-	pub fn release_jobs(&mut self, current_time: u32) -> Vec<Job> {
+	pub fn release_jobs(&mut self, current_time: TimeStep) -> Vec<Job> {
 		self.tasks
 			.iter_mut()
 			.filter_map(|t| t.spawn_job(current_time))
@@ -25,7 +25,7 @@ impl TaskSet {
 		self.tasks.len()
 	}
 
-	pub fn hyperperiod(&self) -> u32 {
+	pub fn hyperperiod(&self) -> TimeStep {
 		self.tasks.iter().map(|t| t.deadline()).max().unwrap()
 	}
 

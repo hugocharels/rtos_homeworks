@@ -36,7 +36,7 @@ impl Job {
 		&self.task
 	}
 
-	pub fn remaining_time(&self) -> u32 {
+	pub fn remaining_time(&self) -> TimeStep {
 		self.remaining_time
 	}
 }

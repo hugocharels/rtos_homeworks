@@ -1,8 +1,10 @@
 use super::strategy::SchedulerStrategy;
 use crate::{
 	models::{Job, TaskSet, TimeStep},
+	schedulers::errors::SchedulingError,
 	schedulers::result::SchedulabilityResult,
 };
+use num::Integer;
 
 
 pub struct RoundRobin;
@@ -14,11 +16,10 @@ impl SchedulerStrategy for RoundRobin {
 		}
 
 		match self.simulate(task_set) {
-			Ok(_) => SchedulabilityResult::SchedulableSimulated,
-			Err(_) => SchedulabilityResult::UnschedulableSimulated,
-		};
-
-		SchedulabilityResult::Unknown
+			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
+			Err(_) => SchedulabilityResult::Unknown,
+		}
 	}
 
 	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
@@ -26,7 +27,7 @@ impl SchedulerStrategy for RoundRobin {
 	}
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		// calculate the least common multiple of all periods
-		todo!()
+		// LCM of all periods
+		task_set.tasks().iter().fold(1, |acc, t| acc.lcm(&t.period()))
 	}
 }
