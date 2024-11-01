@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 
 # Define paths for the algorithms and task sets folders
-algorithms = ["dm", "edf", "rr"]
+algorithms = ["dm"]#, "edf", "rr"]
 tasksets_root = "../tasksets/10-tasks/"  # Update with actual path
 
 # Verify if the directory exists
