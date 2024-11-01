@@ -8,6 +8,7 @@ import multiprocessing
 # Define paths for the algorithms and task sets folders
 algorithms = ["dm", "edf", "rr"]
 tasksets_root = "../tasksets/10-tasks/"  # Update with actual path
+#tasksets_root = "../tasksets/80-percent/"  # Update with actual path
 
 
 def init_results_dict():

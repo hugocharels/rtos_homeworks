@@ -21,16 +21,16 @@ impl TaskSet {
 		self.tasks.iter().map(|t| t.utilization()).sum()
 	}
 
-	pub fn size(&self) -> usize {
+	pub fn len(&self) -> usize {
 		self.tasks.len()
-	}
-
-	pub fn hyperperiod(&self) -> TimeStep {
-		self.tasks.iter().map(|t| t.deadline()).max().unwrap()
 	}
 
 	pub fn tasks(&self) -> &Vec<Task> {
 		&self.tasks
+	}
+
+	pub fn is_implicit_deadline(&self) -> bool {
+		self.tasks.iter().all(|t| t.deadline() == t.period())
 	}
 }
 

@@ -9,8 +9,7 @@ pub struct DM;
 
 impl DM {
 	fn check_deadline_constraints(&self, task_set: &TaskSet) -> bool {
-		// wi <= Di for all i
-		(0..task_set.size())
+		(0..task_set.len())
 			.into_par_iter()
 			.all(|i| {
 				let task = &task_set.tasks()[i];
