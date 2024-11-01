@@ -3,9 +3,9 @@ use crate::{
 	models::{Job, TaskSet, TimeStep},
 	schedulers::errors::SchedulingError,
 	schedulers::result::SchedulabilityResult,
+	schedulers::simulator_strategy::SchedulerSimulatorStrategy,
 };
 use num::Integer;
-
 
 pub struct RoundRobin;
 
@@ -21,7 +21,9 @@ impl SchedulerStrategy for RoundRobin {
 			Err(_) => SchedulabilityResult::Unknown,
 		}
 	}
+}
 
+impl SchedulerSimulatorStrategy for RoundRobin {
 	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
 		queue.is_empty().then(|| &mut queue[0])
 	}

@@ -1,9 +1,9 @@
-use rayon::prelude::*; // Import Rayon for parallel processing
 use super::strategy::SchedulerStrategy;
 use crate::{
 	models::TaskSet,
 	schedulers::result::SchedulabilityResult,
 };
+use rayon::prelude::*;
 
 pub struct DM;
 

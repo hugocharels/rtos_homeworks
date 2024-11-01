@@ -1,7 +1,9 @@
 use super::strategy::SchedulerStrategy;
 use crate::{
-	models::TaskSet,
+	models::{Job, TaskSet, TimeStep},
+	schedulers::errors::SchedulingError,
 	schedulers::result::SchedulabilityResult,
+	schedulers::simulator_strategy::SchedulerSimulatorStrategy,
 };
 
 pub struct EDF;
@@ -16,9 +18,21 @@ impl SchedulerStrategy for EDF {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
 
-		// Simulation
+		match self.simulate(task_set) {
+			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
+			Err(_) => SchedulabilityResult::Unknown,
+		}
+	}
+}
 
-		SchedulabilityResult::Unknown
+impl SchedulerSimulatorStrategy for EDF {
+	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
+		queue.sort_by_key(|j| j.remaining_time());
+		queue.first_mut()
+	}
 
+	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
+		task_set.tasks().iter().map(|t| t.deadline()).max().unwrap_or(0)
 	}
 }

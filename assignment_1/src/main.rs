@@ -14,15 +14,15 @@ fn main() {
 	let verbose = matches.get_flag("verbose");
 	let taskset_file = matches.get_one::<String>("taskset file").unwrap();
 
-	println!("Algorithm: {}", scheduling_algorithm);
-	if verbose {
-		println!("Verbose mode is enabled");
-	}
-	println!("Task set file: {}", taskset_file);
+	// println!("Algorithm: {}", scheduling_algorithm);
+	// if verbose {
+	// 	println!("Verbose mode is enabled");
+	// }
+	// println!("Task set file: {}", taskset_file);
 
 	// Read the task set from the file
 	let taskset = taskset_parser::read_taskset_from_file(taskset_file);
-	println!("Task set loaded: {:?}", taskset);
+	// println!("Task set loaded: {:?}", taskset);
 
 	// Check if the task set is schedulable
 	let mut context = schedulers::SchedulerContext::new(taskset);
@@ -41,7 +41,7 @@ fn main() {
 	let strategy = strategy.unwrap();
 	context.set_strategy(strategy.as_ref());
 	let result = context.check_schedulability();
-	println!("Schedulability result: {:?}", result);
+	// println!("Schedulability result: {:?}", result);
 
 	std::process::exit(result as i32);
 }
