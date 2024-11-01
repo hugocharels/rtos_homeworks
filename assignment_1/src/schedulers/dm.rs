@@ -7,32 +7,47 @@ use crate::{
 
 pub struct DM;
 
+
+impl DM {
+
+	fn theorem29(&self, task_set: &TaskSet) -> bool {
+		// wi <= Di for all i
+	    for (i, task) in task_set.tasks().iter().enumerate() {
+	        let mut w = task.wcet() as f64;
+	        loop {
+	            let mut w_next = task.wcet() as f64;
+	            for j in 0..i {
+	                w_next += (w as f64 / task_set.tasks()[j].period() as f64).ceil() * (task_set.tasks()[j].wcet() as f64);
+	            }
+	            if w == w_next {
+	                break;
+	            }
+	            w = w_next;
+	        }
+	        if w > task.deadline() as f64 {
+	            return false;
+	        }
+	    }
+	    true
+	}
+}
+
+
+
 impl SchedulerStrategy for DM {
 	fn is_schedulable(&self, task_set: &mut TaskSet) -> SchedulabilityResult {
 		if task_set.system_utilization() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
-		} else if task_set.system_utilization() <= task_set.size() as f64 * (2f64.powf(1.0 / task_set.size() as f64) - 1.0) {
-			return SchedulabilityResult::SchedulableShortcut;
 		}
+		// } else if task_set.system_utilization() <= task_set.size() as f64 * (2f64.powf(1.0 / task_set.size() as f64) - 1.0) {
+		// 	return SchedulabilityResult::SchedulableShortcut;
+		// }
 
-		match self.simulate(task_set) {
-			Ok(()) => SchedulabilityResult::SchedulableSimulated,
-			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
-			Err(_) => SchedulabilityResult::Unknown,
+		if self.theorem29(task_set) {
+			SchedulabilityResult::SchedulableShortcut
+		} else {
+			SchedulabilityResult::UnschedulableShortcut
 		}
 	}
 
-	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
-		queue.iter_mut().reduce(|res, job| {
-			if job.task().deadline() < res.task().deadline() {
-				job
-			} else {
-				res
-			}
-		})
-	}
-
-	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		task_set.hyperperiod()
-	}
 }
