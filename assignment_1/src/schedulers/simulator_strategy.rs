@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use crate::{
 	models::{Job, TaskSet, TimeStep},
 	schedulers::errors::SchedulingError,
@@ -12,26 +13,33 @@ pub trait SchedulerSimulatorStrategy {
 	fn simulate(&self, task_set: &mut TaskSet) -> Result<(), SchedulingError> {
 		let mut queue = vec![];
 		let t_max = self.t_max(task_set);
+
 		for t in 0..t_max {
-			// Release new jobs
-			queue.extend(task_set.release_jobs(t));
-			// Check for deadlines
-			for job in &queue {
-				if job.deadline_missed(t) {
-					return Err(SchedulingError::DeadlineMiss {
-						job: job.clone(),
-						t,
-					});
-				}
+			// Release new jobs in parallel
+			queue.par_extend(task_set.release_jobs(t));
+
+			// Check for deadlines in parallel
+			if queue.par_iter().any(|job| job.deadline_missed(t)) {
+				return Err(SchedulingError::DeadlineMiss {
+					// Find the first job that missed the deadline (for detailed error reporting)
+					job: queue.iter().find(|job| job.deadline_missed(t)).unwrap().clone(),
+					t,
+				});
 			}
+
+			// Schedule the next job if available
 			if let Some(elected) = self.next_job(&mut queue) {
 				elected.schedule(1);
 			}
-			// Only keep the jobs that are not complete. This is ne very efficient
-			// since we should only check for `elected`, but it is to avoid fighting
-			// the borrow checker.
-			queue.retain(|j| !j.is_complete());
+
+			// Filter out completed jobs in parallel and create a new queue
+			queue = queue
+				.into_par_iter()
+				.filter(|j| !j.is_complete())
+				.collect();
 		}
 		Ok(())
 	}
+
+
 }

@@ -34,8 +34,7 @@ impl SchedulerSimulatorStrategy for RoundRobin {
 	}
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		// LCM of all periods
-		task_set.tasks().iter().fold(1, |acc, t| acc.lcm(&t.period()))
+		task_set.hyperperiod()
 	}
 }
 

@@ -1,4 +1,6 @@
 use super::{Job, Task, TimeStep};
+use num::Integer;
+use rayon::prelude::*;
 
 #[derive(Clone, Debug)]
 pub struct TaskSet {
@@ -12,7 +14,7 @@ impl TaskSet {
 
 	pub fn release_jobs(&mut self, current_time: TimeStep) -> Vec<Job> {
 		self.tasks
-			.iter_mut()
+			.par_iter_mut()
 			.filter_map(|t| t.spawn_job(current_time))
 			.collect()
 	}
@@ -27,6 +29,10 @@ impl TaskSet {
 
 	pub fn tasks(&self) -> &Vec<Task> {
 		&self.tasks
+	}
+
+	pub fn hyperperiod(&self) -> TimeStep {
+		self.tasks.iter().fold(1, |acc, t| acc.lcm(&t.period()))
 	}
 
 	pub fn is_implicit_deadline(&self) -> bool {
