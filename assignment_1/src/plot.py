@@ -6,7 +6,8 @@ from concurrent.futures import ProcessPoolExecutor
 import multiprocessing
 
 # Define paths for the algorithms and task sets folders
-algorithms = ["dm", "edf", "rr"]
+# algorithms = ["dm", "edf", "rr"]
+algorithms = ["rr"]
 tasksets_root = "../tasksets/10-tasks/"  # Update with actual path
 #tasksets_root = "../tasksets/80-percent/"  # Update with actual path
 
