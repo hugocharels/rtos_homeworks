@@ -1,8 +1,8 @@
-use rayon::prelude::*;
 use crate::{
 	models::{Job, TaskSet, TimeStep},
 	schedulers::errors::SchedulingError,
 };
+use rayon::prelude::*;
 
 
 pub trait SchedulerSimulatorStrategy {
@@ -40,6 +40,4 @@ pub trait SchedulerSimulatorStrategy {
 		}
 		Ok(())
 	}
-
-
 }
