@@ -36,6 +36,8 @@ impl SchedulerStrategy for DM {
 			return SchedulabilityResult::UnschedulableShortcut;
 		}
 
+		task_set.sort_by_deadline();
+
 		if self.check_deadline_constraints(task_set) {
 			SchedulabilityResult::SchedulableShortcut
 		} else {

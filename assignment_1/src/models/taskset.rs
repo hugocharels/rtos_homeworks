@@ -19,6 +19,10 @@ impl TaskSet {
 			.collect()
 	}
 
+	pub fn sort_by_deadline(&mut self) {
+		self.tasks.sort_by_key(|task| task.deadline());
+	}
+
 	pub fn system_utilization(&self) -> f64 {
 		self.tasks.iter().map(|t| t.utilization()).sum()
 	}
