@@ -1,4 +1,3 @@
-use rayon::prelude::*;
 use super::strategy::SchedulerStrategy;
 use crate::{
 	models::{Job, TaskSet, TimeStep},
@@ -6,6 +5,7 @@ use crate::{
 	schedulers::result::SchedulabilityResult,
 	schedulers::simulator_strategy::SchedulerSimulatorStrategy,
 };
+use rayon::prelude::*;
 
 pub struct EDF;
 
@@ -29,7 +29,7 @@ impl SchedulerStrategy for EDF {
 
 impl SchedulerSimulatorStrategy for EDF {
 	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
-		queue.par_iter_mut().min_by_key(|j| j.remaining_time())
+		queue.par_iter_mut().min_by_key(|j| j.deadline())
 	}
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {

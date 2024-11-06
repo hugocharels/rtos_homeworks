@@ -39,6 +39,10 @@ impl Job {
 	pub fn remaining_time(&self) -> TimeStep {
 		self.remaining_time
 	}
+
+	pub fn deadline(&self) -> TimeStep {
+		self.deadline
+	}
 }
 
 #[cfg(test)]

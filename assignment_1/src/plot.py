@@ -1,15 +1,15 @@
+import multiprocessing
 import os
 import subprocess
-import matplotlib.pyplot as plt
-from collections import defaultdict, Counter
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
-import multiprocessing
+import matplotlib.pyplot as plt
 
 # Define paths for the algorithms and task sets folders
 # algorithms = ["dm", "edf", "rr"]
-algorithms = ["rr"]
+algorithms = ["dm", "edf"]
 tasksets_root = "../tasksets/10-tasks/"  # Update with actual path
-#tasksets_root = "../tasksets/80-percent/"  # Update with actual path
+# tasksets_root = "../tasksets/80-percent/"  # Update with actual path
 
 
 def init_results_dict():
