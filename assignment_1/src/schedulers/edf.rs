@@ -33,6 +33,16 @@ impl SchedulerSimulatorStrategy for EDF {
 	}
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		task_set.tasks().iter().map(|t| t.deadline()).max().unwrap_or(0)
+		let mut l = task_set.tasks().par_iter().map(|task| task.wcet()).sum::<TimeStep>();
+		loop {
+			let l_next = task_set.tasks().par_iter()
+				.map(|task| (l + task.period() - 1) / task.period() * task.wcet())
+				.sum::<TimeStep>();
+			if l_next == l {
+				break;
+			}
+			l = l_next;
+		}
+		l
 	}
 }

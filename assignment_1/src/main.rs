@@ -2,15 +2,12 @@ use crate::schedulers::{
 	result::SchedulabilityResult,
 	SchedulerStrategy,
 };
-use std::fs::{self, File};
-use std::io::{self, Write};
-use std::path::Path;
+use std::io::Write;
 
 mod arg_parser;
 mod models;
 mod schedulers;
 mod taskset_parser;
-
 
 fn main() {
 	let matches = arg_parser::get_arg_parser().get_matches();
