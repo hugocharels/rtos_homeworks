@@ -16,7 +16,7 @@ pub trait SchedulerSimulatorStrategy {
 
 		for t in 0..t_max {
 			// Release new jobs in parallel
-			queue.par_extend(task_set.release_jobs(t));
+			queue.extend(task_set.release_jobs(t));
 
 			// Check for deadlines in parallel
 			if queue.par_iter().any(|job| job.deadline_missed(t)) {

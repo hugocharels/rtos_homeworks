@@ -36,7 +36,14 @@ impl TaskSet {
 	}
 
 	pub fn hyperperiod(&self) -> TimeStep {
-		self.tasks.iter().fold(1, |acc, t| acc.lcm(&t.period()))
+		fn checked_lcm(a: TimeStep, b: TimeStep) -> Option<TimeStep> {
+			a.checked_mul(b / a.gcd(&b))
+		}
+
+		self.tasks.iter()
+			.map(|task| task.period())
+			.try_fold(1, |acc, period| checked_lcm(acc, period))
+			.unwrap_or(TimeStep::MAX)
 	}
 
 	pub fn is_implicit_deadline(&self) -> bool {

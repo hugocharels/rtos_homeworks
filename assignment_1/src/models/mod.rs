@@ -6,4 +6,4 @@ pub use job::Job;
 pub use task::Task;
 pub use taskset::TaskSet;
 
-pub type TimeStep = u64;
+pub type TimeStep = u32;

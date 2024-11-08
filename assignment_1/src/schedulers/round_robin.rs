@@ -5,7 +5,6 @@ use crate::{
 	schedulers::result::SchedulabilityResult,
 	schedulers::simulator_strategy::SchedulerSimulatorStrategy,
 };
-use num::Integer;
 
 pub struct RoundRobin;
 
@@ -18,7 +17,7 @@ impl SchedulerStrategy for RoundRobin {
 		match self.simulate(task_set) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
-			Err(_) => SchedulabilityResult::Unknown,
+			// Err(_) => SchedulabilityResult::Unknown,
 		}
 	}
 }

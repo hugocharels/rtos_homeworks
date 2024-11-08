@@ -22,7 +22,7 @@ impl SchedulerStrategy for EDF {
 		match self.simulate(task_set) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
-			Err(_) => SchedulabilityResult::Unknown,
+			// Err(_) => SchedulabilityResult::Unknown,
 		}
 	}
 }

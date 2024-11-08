@@ -6,9 +6,9 @@ from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 
 # Define paths for the algorithms and task sets folders
-# algorithms = ["dm", "edf", "rr"]
-algorithms = ["dm", "edf"]
-tasksets_root = "../tasksets/10-tasks/"  # Update with actual path
+algorithms = ["dm", "edf", "rr"]
+# algorithms = ["dm", "edf"]
+tasksets_root = "../tasksets-2/10-tasks/"  # Update with actual path
 # tasksets_root = "../tasksets/80-percent/"  # Update with actual path
 
 
@@ -142,3 +142,74 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
+
+# import pandas as pd
+# import matplotlib.pyplot as plt
+#
+# # Load the CSV file into a pandas DataFrame
+# csv_file = '../scheduling_results.csv'  # Replace with your actual CSV file name
+# df = pd.read_csv(csv_file)
+#
+# # Print the column names for verification
+# print("Columns in CSV file:", df.columns)
+#
+# # Updated column names based on your CSV structure
+# num_tasks_col = 'Number of Tasks'
+# algorithm_col = 'Algorithm'
+# utilization_col = 'Utilization'
+# feasible_col = 'Schedulable'
+#
+# # Ensure that 'Schedulable' is converted to a binary column (e.g., 1 for True/Yes, 0 for False/No)
+# df[feasible_col] = df[feasible_col].apply(lambda x: 1 if x in (0, 1) else 0 if x in (2, 3) else x)
+#
+# # Convert 'Utilization' from percentage string (e.g., "80%") to float (e.g., 0.8)
+# df[utilization_col] = df[utilization_col].str.rstrip('%').astype(float) / 100
+#
+# # Plot 1: Ratio of task sets that are feasible according to the number of tasks (80-percent)
+# df_80 = df[df[utilization_col] >= 0.8]  # Use 0.8 for 80% utilization
+# feasible_ratio_per_task_count = df_80.groupby(num_tasks_col)[feasible_col].mean()
+#
+# plt.figure(figsize=(10, 6))
+# plt.plot(feasible_ratio_per_task_count.index, feasible_ratio_per_task_count.values, marker='o')
+# plt.title('Ratio of Feasible Task Sets by Number of Tasks (80% Utilization)')
+# plt.xlabel('Number of Tasks')
+# plt.ylabel('Feasible Ratio')
+# plt.grid(True)
+# plt.savefig('feasible_ratio_per_task_count.png')
+#
+# # Plot 2: Success rate of each algorithm according to the number of tasks (80-percent)
+# success_rate_per_algorithm = df_80.groupby([num_tasks_col, algorithm_col])[feasible_col].mean().unstack()
+#
+# plt.figure(figsize=(10, 6))
+# success_rate_per_algorithm.plot(marker='o')
+# plt.title('Success Rate of Algorithms by Number of Tasks (80% Utilization)')
+# plt.xlabel('Number of Tasks')
+# plt.ylabel('Success Rate')
+# plt.grid(True)
+# plt.legend(title='Algorithm')
+# plt.savefig('success_rate_per_algorithm.png')
+#
+# # Plot 3: Ratio of task sets that are feasible according to utilization (10-tasks)
+# df_10_tasks = df[df[num_tasks_col] == 10]  # Filter for 10-task sets
+# feasible_ratio_per_utilization = df_10_tasks.groupby(utilization_col)[feasible_col].mean()
+#
+# plt.figure(figsize=(10, 6))
+# plt.plot(feasible_ratio_per_utilization.index, feasible_ratio_per_utilization.values, marker='o')
+# plt.title('Ratio of Feasible Task Sets by Utilization (10 Tasks)')
+# plt.xlabel('Utilization')
+# plt.ylabel('Feasible Ratio')
+# plt.grid(True)
+# plt.savefig('feasible_ratio_per_utilization.png')
+#
+# # Plot 4: Success rate of each algorithm according to utilization (10-tasks)
+# success_rate_per_algorithm_util = df_10_tasks.groupby([utilization_col, algorithm_col])[feasible_col].mean().unstack()
+#
+# plt.figure(figsize=(10, 6))
+# success_rate_per_algorithm_util.plot(marker='o')
+# plt.title('Success Rate of Algorithms by Utilization (10 Tasks)')
+# plt.xlabel('Utilization')
+# plt.ylabel('Success Rate')
+# plt.grid(True)
+# plt.legend(title='Algorithm')
+# plt.savefig('success_rate_per_algorithm_util.png')

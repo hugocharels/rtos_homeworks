@@ -32,14 +32,6 @@ impl Job {
 		self.remaining_time -= n_steps;
 	}
 
-	pub fn task(&self) -> &Task {
-		&self.task
-	}
-
-	pub fn remaining_time(&self) -> TimeStep {
-		self.remaining_time
-	}
-
 	pub fn deadline(&self) -> TimeStep {
 		self.deadline
 	}
