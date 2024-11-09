@@ -22,7 +22,6 @@ impl SchedulerStrategy for EDF {
 		match self.simulate(task_set) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(SchedulingError::DeadlineMiss { job: _job, t: _t }) => SchedulabilityResult::UnschedulableSimulated,
-			// Err(_) => SchedulabilityResult::Unknown,
 		}
 	}
 }
@@ -36,7 +35,7 @@ impl SchedulerSimulatorStrategy for EDF {
 		let mut l = task_set.tasks().par_iter().map(|task| task.wcet()).sum::<TimeStep>();
 		loop {
 			let l_next = task_set.tasks().par_iter()
-				.map(|task| (l + task.period() - 1) / task.period() * task.wcet())
+				.map(|task| ((l as f64 / task.period() as f64).ceil() as TimeStep) * task.wcet())
 				.sum::<TimeStep>();
 			if l_next == l {
 				break;

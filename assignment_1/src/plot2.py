@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 
 # Set the seaborn style for more professional-looking plots
-sns.set(style="whitegrid")
+sns.set_theme(style="whitegrid")
 
 # Load the CSV file into a pandas DataFrame
 csv_file = '../scheduling_results.csv'  # Replace with your actual CSV file path
@@ -48,7 +48,7 @@ success_rate_per_algorithm = df_80.groupby([num_tasks_col, algorithm_col])[feasi
 
 # Plotting - Bar plot for success rate by algorithm
 plt.figure(figsize=(14, 7))
-sns.barplot(x=num_tasks_col, y=feasible_col, hue=algorithm_col, data=success_rate_per_algorithm, palette="Set2")
+sns.barplot(x=num_tasks_col, y=feasible_col, hue=algorithm_col, data=success_rate_per_algorithm, palette="Set3")
 plt.title('Success Rate of Each Algorithm by Number of Tasks (80% Utilization)', fontsize=14)
 plt.xlabel('Number of Tasks', fontsize=12)
 plt.ylabel('Success Rate', fontsize=12)
@@ -66,7 +66,7 @@ feasible_ratio_per_utilization = df_10_tasks.groupby(utilization_col)[feasible_c
 
 # Plotting - Bar plot for feasibility ratio by utilization
 plt.figure(figsize=(12, 6))
-sns.barplot(x=utilization_col, y=feasible_col, data=feasible_ratio_per_utilization, palette="Greens_d")
+sns.barplot(x=utilization_col, y=feasible_col, data=feasible_ratio_per_utilization, palette="Reds_d")
 plt.title('Ratio of Feasible Task Sets by Utilization (10 Tasks)', fontsize=14)
 plt.xlabel('Utilization', fontsize=12)
 plt.ylabel('Feasible Ratio', fontsize=12)
@@ -81,7 +81,7 @@ success_rate_per_algorithm_util = df_10_tasks.groupby([utilization_col, algorith
 
 # Plotting - Bar plot for success rate by algorithm and utilization
 plt.figure(figsize=(14, 7))
-sns.barplot(x=utilization_col, y=feasible_col, hue=algorithm_col, data=success_rate_per_algorithm_util, palette="Set1")
+sns.barplot(x=utilization_col, y=feasible_col, hue=algorithm_col, data=success_rate_per_algorithm_util)
 plt.title('Success Rate of Each Algorithm by Utilization (10 Tasks)', fontsize=14)
 plt.xlabel('Utilization', fontsize=12)
 plt.ylabel('Success Rate', fontsize=12)
