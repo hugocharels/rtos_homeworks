@@ -1,7 +1,4 @@
-use crate::schedulers::{
-	result::SchedulabilityResult,
-	SchedulerStrategy,
-};
+use crate::schedulers::SchedulerStrategy;
 use std::io::Write;
 
 mod arg_parser;
@@ -9,6 +6,7 @@ mod models;
 mod schedulers;
 mod taskset_parser;
 
+/*
 fn main() {
 	let matches = arg_parser::get_arg_parser().get_matches();
 	let scheduling_algorithm = matches.get_one::<String>("scheduling algorithm").unwrap();
@@ -48,10 +46,10 @@ fn main() {
 		std::process::exit(SchedulabilityResult::Unknown as i32);
 	}
 }
-
-/*
-use std::{fs, io};
+*/
 use std::fs::File;
+///*
+use std::{fs, io};
 
 fn get_utilization_from_dir(dir: &str) -> &str {
 	// Extract the percentage utilization from the directory name (e.g., "tasksets/10-tasks/30-percent")
@@ -61,34 +59,34 @@ fn get_utilization_from_dir(dir: &str) -> &str {
 fn main() -> io::Result<()> {
 	// Specify the directories for the task sets
 	let taskset_dirs_80_percent = vec![
-		"tasksets-2/80-percent/4-tasks",
-		"tasksets-2/80-percent/6-tasks",
-		"tasksets-2/80-percent/8-tasks",
-		"tasksets-2/80-percent/10-tasks",
-		"tasksets-2/80-percent/12-tasks",
-		"tasksets-2/80-percent/14-tasks",
-		"tasksets-2/80-percent/16-tasks",
-		"tasksets-2/80-percent/18-tasks",
-		"tasksets-2/80-percent/20-tasks",
+		"tasksets/80-percent/4-tasks",
+		"tasksets/80-percent/6-tasks",
+		"tasksets/80-percent/8-tasks",
+		"tasksets/80-percent/10-tasks",
+		"tasksets/80-percent/12-tasks",
+		"tasksets/80-percent/14-tasks",
+		"tasksets/80-percent/16-tasks",
+		"tasksets/80-percent/18-tasks",
+		"tasksets/80-percent/20-tasks",
 	];
 	let taskset_dirs_10_tasks = vec![
-		"tasksets-2/10-tasks/10-percent",
-		"tasksets-2/10-tasks/20-percent",
-		"tasksets-2/10-tasks/30-percent",
-		"tasksets-2/10-tasks/40-percent",
-		"tasksets-2/10-tasks/50-percent",
-		"tasksets-2/10-tasks/60-percent",
-		"tasksets-2/10-tasks/70-percent",
-		"tasksets-2/10-tasks/80-percent",
-		"tasksets-2/10-tasks/90-percent",
-		"tasksets-2/10-tasks/100-percent",
+		"tasksets/10-tasks/10-percent",
+		"tasksets/10-tasks/20-percent",
+		"tasksets/10-tasks/30-percent",
+		"tasksets/10-tasks/40-percent",
+		"tasksets/10-tasks/50-percent",
+		"tasksets/10-tasks/60-percent",
+		"tasksets/10-tasks/70-percent",
+		"tasksets/10-tasks/80-percent",
+		"tasksets/10-tasks/90-percent",
+		"tasksets/10-tasks/100-percent",
 	];
 
 	// Algorithms to test
 	let algorithms = vec!["dm", "edf", "rr"];
 
 	// Prepare the CSV file for output
-	let mut file = File::create("scheduling_results.csv")?;
+	let mut file = File::create("../old_scheduling_results.csv")?;
 	writeln!(file, "Taskset,Algorithm,Number of Tasks,Utilization,Schedulable")?;
 
 	// Iterate over the task sets for the 80-percent folder
@@ -121,10 +119,10 @@ fn main() -> io::Result<()> {
 							"80%", // Assuming all sets in this dir have 80% utilization
 							result as i32
 						)?;
-						file.flush()?;
 					}
 				}
 			}
+			file.flush()?;
 		}
 	}
 
@@ -158,13 +156,13 @@ fn main() -> io::Result<()> {
 							get_utilization_from_dir(dir), // Custom function to extract utilization from the dir name
 							result as i32
 						)?;
-						file.flush()?;
 					}
 				}
 			}
+			file.flush()?;
 		}
 	}
 
 	Ok(())
 }
- */
+//*/
