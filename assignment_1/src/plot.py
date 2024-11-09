@@ -12,7 +12,7 @@ custom_palette = {
 }
 
 # Load the CSV file into a pandas DataFrame
-csv_file = '../old_scheduling_results.csv'  # Replace with your actual CSV file path
+csv_file = '../scheduling_results.csv'  # Replace with your actual CSV file path
 df = pd.read_csv(csv_file)
 
 # Updated column names based on your CSV structure

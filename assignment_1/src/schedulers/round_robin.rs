@@ -31,6 +31,6 @@ impl SchedulerSimulatorStrategy for RoundRobin {
 	}
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		task_set.hyperperiod().min(1_000_000)
+		task_set.hyperperiod().min(100_000)
 	}
 }

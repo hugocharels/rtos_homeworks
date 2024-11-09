@@ -86,7 +86,7 @@ fn main() -> io::Result<()> {
 	let algorithms = vec!["dm", "edf", "rr"];
 
 	// Prepare the CSV file for output
-	let mut file = File::create("../old_scheduling_results.csv")?;
+	let mut file = File::create("../scheduling_results.csv")?;
 	writeln!(file, "Taskset,Algorithm,Number of Tasks,Utilization,Schedulable")?;
 
 	// Iterate over the task sets for the 80-percent folder
