@@ -12,8 +12,8 @@ def style_plot(ax, title, xlabel, ylabel):
 	ax.grid(True, which='both', linestyle='--', linewidth=0.5)
 	ax.tick_params(axis='both', which='major', labelsize=10)
 	ax.tick_params(axis='both', which='minor', labelsize=8)
-	ax.legend(fontsize=10)
 	ax.set_ylim(0, 1)  # Ensure y-axis is between 0 and 1
+	ax.legend(loc='upper right', fontsize=10)  # Position the legend at the top right
 
 # Filter tasksets for "tasksets/80-percent"
 df_filtered = df[df['Taskset'].str.startswith('tasksets/80-percent')]
@@ -44,7 +44,6 @@ for algo in algorithms:
 	ax.plot(df_algo_ratio.index, df_algo_ratio.values, marker='o', label=algo)
 
 style_plot(ax, 'Success Rate of Each Algorithm by Number of Tasks (80% Utilization)', 'Number of Tasks', 'Success Rate')
-plt.legend(title="Algorithms", loc='upper left', fontsize=10)
 plt.tight_layout()
 plt.savefig("../success_rate_80_percent.png")
 
@@ -82,7 +81,6 @@ for algo in algorithms:
 	ax.plot(df_algo_ratio.index, df_algo_ratio.values, marker='o', label=algo)
 
 style_plot(ax, 'Success Rate of Each Algorithm by Utilization (10-Tasks)', 'Utilization (%)', 'Success Rate')
-plt.legend(title="Algorithms", loc='upper left', fontsize=10)
 plt.tight_layout()
 plt.savefig("../success_rate_10_tasks.png")
 
