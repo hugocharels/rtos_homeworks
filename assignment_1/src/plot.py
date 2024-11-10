@@ -1,124 +1,90 @@
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Set the seaborn style for more professional-looking plots
-sns.set_theme(style="whitegrid")
+# Read the CSV file
+df = pd.read_csv('../scheduling_results.csv')
 
-custom_palette = {
-	'rr': 'lightblue',
-	'dm': 'lightcoral',  # light red
-	'edf': 'plum'  # light purple
-}
+# Function to enhance the plot
+def style_plot(ax, title, xlabel, ylabel):
+	ax.set_title(title, fontsize=14, weight='bold')
+	ax.set_xlabel(xlabel, fontsize=12)
+	ax.set_ylabel(ylabel, fontsize=12)
+	ax.grid(True, which='both', linestyle='--', linewidth=0.5)
+	ax.tick_params(axis='both', which='major', labelsize=10)
+	ax.tick_params(axis='both', which='minor', labelsize=8)
+	ax.legend(fontsize=10)
+	ax.set_ylim(0, 1)  # Ensure y-axis is between 0 and 1
 
-# Load the CSV file into a pandas DataFrame
-csv_file = '../scheduling_results.csv'  # Replace with your actual CSV file path
-df = pd.read_csv(csv_file)
+# Filter tasksets for "tasksets/80-percent"
+df_filtered = df[df['Taskset'].str.startswith('tasksets/80-percent')]
 
-# Updated column names based on your CSV structure
-tasksets_col = 'Taskset'
-num_tasks_col = 'Number of Tasks'
-algorithm_col = 'Algorithm'
-utilization_col = 'Utilization'
-feasible_col = 'Schedulable'
-feasible_res_col = 'Schedulable Result'
+# Define schedulability conditions
+df_filtered['Schedulable'] = df_filtered['Schedulable'].apply(lambda x: 1 if x in [0, 1] else 0)
 
-# Ensure that 'Schedulable' is a binary column (1 for schedulable, 0 for not schedulable)
-df[feasible_res_col] = df[feasible_col].apply(lambda x: 1 if x in (0, 1) else 0 if x in (2, 3) else x)
+# Group by 'Taskset' and 'Number of Tasks'
+df_feasibility = df_filtered.groupby(['Taskset', 'Number of Tasks'])['Schedulable'].any().reset_index()
 
-# Convert 'Utilization' from percentage string (e.g., "80%") to float (e.g., 0.8)
-df[utilization_col] = df[utilization_col].str.rstrip('%').astype(float) / 100
+# Ratio of feasible task sets by number of tasks
+df_ratio = df_feasibility.groupby('Number of Tasks')['Schedulable'].mean()
 
-# Ensure the 'Algorithm' column is treated with a categorical type for ordering
-algorithm_order = ['rr', 'dm', 'edf']
-df[algorithm_col] = pd.Categorical(df[algorithm_col], categories=algorithm_order, ordered=True)
-
-# Plot 1: Ratio of task sets that are feasible according to the number of tasks (80% Utilization)
-df_80 = df[df[tasksets_col].str.contains('80-percent/')]
-feasible_ratio_per_task_count = df_80.groupby(num_tasks_col, observed=False)[feasible_res_col].mean().reset_index()
-
-plt.figure(figsize=(12, 6))
-sns.barplot(x=num_tasks_col, y=feasible_res_col, data=feasible_ratio_per_task_count, hue=num_tasks_col, legend=False,
-            palette="deep")
-plt.title('Ratio of Feasible Task Sets by Number of Tasks (80% Utilization)', fontsize=14)
-plt.xlabel('Number of Tasks', fontsize=12)
-plt.ylabel('Feasible Ratio', fontsize=12)
-plt.xticks(rotation=45)
+# Plot feasibility ratio
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(df_ratio.index, df_ratio.values, marker='o', color='tab:blue', linestyle='-', markersize=6, label='Feasibility Ratio')
+style_plot(ax, 'Ratio of Feasible Task Sets by Number of Tasks (80% Utilization)', 'Number of Tasks', 'Ratio of Feasible Task Sets')
 plt.tight_layout()
-plt.savefig('../feasible_ratio_per_task_count_80_percent.png')
+plt.savefig("../feasibility_ratio_80_percent.png")
 
-# Plot 2: Success rate of each algorithm according to the number of tasks (80% Utilization)
-success_rate_per_algorithm_80 = df_80.groupby([num_tasks_col, algorithm_col], observed=False)[
-	feasible_res_col].mean().reset_index()
+# Plot success rate for each algorithm by number of tasks
+algorithms = df_filtered['Algorithm'].unique()
 
-plt.figure(figsize=(14, 7))
-sns.barplot(x=num_tasks_col, y=feasible_res_col, hue=algorithm_col, data=success_rate_per_algorithm_80,
-            palette=custom_palette)
-plt.title('Success Rate of Each Algorithm by Number of Tasks (80% Utilization)', fontsize=14)
-plt.xlabel('Number of Tasks', fontsize=12)
-plt.ylabel('Success Rate', fontsize=12)
-plt.xticks(rotation=45)
+fig, ax = plt.subplots(figsize=(12, 7))
+for algo in algorithms:
+	df_algo = df_filtered[df_filtered['Algorithm'] == algo]
+	df_algo_ratio = df_algo.groupby('Number of Tasks')['Schedulable'].mean()
+	ax.plot(df_algo_ratio.index, df_algo_ratio.values, marker='o', label=algo)
+
+style_plot(ax, 'Success Rate of Each Algorithm by Number of Tasks (80% Utilization)', 'Number of Tasks', 'Success Rate')
+plt.legend(title="Algorithms", loc='upper left', fontsize=10)
 plt.tight_layout()
-plt.savefig('../success_rate_per_algorithm_80_percent.png')
+plt.savefig("../success_rate_80_percent.png")
 
-### Plot 3: Ratio of tasks that are feasible according to the utilization (10 Tasks)
-df_10 = df[df[tasksets_col].str.contains('10-tasks/')]
-feasible_ratio_per_utilization = df_10.groupby(utilization_col, observed=False)[feasible_res_col].mean().reset_index()
+# Filter tasksets for "tasksets/10-tasks"
+df_filtered = df[df['Taskset'].str.startswith('tasksets/10-tasks')]
 
-plt.figure(figsize=(12, 6))
-sns.lineplot(x=utilization_col, y=feasible_res_col, data=feasible_ratio_per_utilization, marker='o')
-plt.title('Ratio of Feasible Task Sets by Utilization (10 Tasks)', fontsize=14)
-plt.xlabel('Utilization', fontsize=12)
-plt.ylabel('Feasible Ratio', fontsize=12)
+# Define schedulability conditions
+df_filtered['Schedulable'] = df_filtered['Schedulable'].apply(lambda x: 1 if x in [0, 1] else 0)
+
+# Group by 'Taskset' and 'Utilization'
+df_feasibility = df_filtered.groupby(['Taskset', 'Utilization'])['Schedulable'].any().reset_index()
+
+# Clean and convert 'Utilization' column to numeric
+df_feasibility['Utilization'] = pd.to_numeric(df_feasibility['Utilization'].str.strip(), errors='coerce')
+
+# Ratio of feasible task sets by utilization
+df_ratio = df_feasibility.groupby('Utilization')['Schedulable'].mean()
+df_ratio = df_ratio.sort_index(ascending=True)
+
+# Plot feasibility ratio by utilization
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(df_ratio.index, df_ratio.values, marker='o', color='tab:green', linestyle='-', markersize=6, label='Feasibility Ratio')
+style_plot(ax, 'Ratio of Feasible Task Sets by Utilization (10-Tasks)', 'Utilization (%)', 'Ratio of Feasible Task Sets')
 plt.tight_layout()
-plt.savefig('../feasible_ratio_per_utilization_10_tasks.png')
+plt.savefig("../feasibility_ratio_10_tasks.png")
 
-### Plot 4: Success rate of each algorithm according to the utilization (10 Tasks)
-success_rate_per_algorithm_10 = df_10.groupby([utilization_col, algorithm_col], observed=False)[
-	feasible_res_col].mean().reset_index()
+# Plot success rate for each algorithm by utilization
+df_filtered['Utilization'] = df_filtered['Utilization'].apply(lambda x: int(x.strip('%')))
 
-plt.figure(figsize=(14, 7))
-sns.lineplot(x=utilization_col, y=feasible_res_col, hue=algorithm_col, data=success_rate_per_algorithm_10, marker='o',
-             palette=custom_palette)
-plt.title('Success Rate of Each Algorithm by Utilization (10 Tasks)', fontsize=14)
-plt.xlabel('Utilization', fontsize=12)
-plt.ylabel('Success Rate', fontsize=12)
+fig, ax = plt.subplots(figsize=(12, 7))
+for algo in algorithms:
+	df_algo = df_filtered[df_filtered['Algorithm'] == algo]
+	df_algo_ratio = df_algo.groupby('Utilization')['Schedulable'].mean()
+	df_algo_ratio = df_algo_ratio.sort_index(ascending=True)
+	ax.plot(df_algo_ratio.index, df_algo_ratio.values, marker='o', label=algo)
+
+style_plot(ax, 'Success Rate of Each Algorithm by Utilization (10-Tasks)', 'Utilization (%)', 'Success Rate')
+plt.legend(title="Algorithms", loc='upper left', fontsize=10)
 plt.tight_layout()
-plt.savefig('../success_rate_per_algorithm_10_tasks.png')
+plt.savefig("../success_rate_10_tasks.png")
 
-for alg in ("rr", "dm", "edf"):
-	plt.figure(figsize=(14, 8))
-
-	# Get unique taskset names for alignment
-	subdirs = df[df[algorithm_col] == alg][tasksets_col].unique()
-
-	# Calculate counts and reindex for alignment with subdirs
-	exit_code_0 = df[(df[feasible_col] == 0) & (df[algorithm_col] == alg)].groupby(tasksets_col).size().reindex(subdirs,
-	                                                                                                            fill_value=0)
-	exit_code_1 = df[(df[feasible_col] == 1) & (df[algorithm_col] == alg)].groupby(tasksets_col).size().reindex(subdirs,
-	                                                                                                            fill_value=0)
-	exit_code_2 = df[(df[feasible_col] == 2) & (df[algorithm_col] == alg)].groupby(tasksets_col).size().reindex(subdirs,
-	                                                                                                            fill_value=0)
-	exit_code_3 = df[(df[feasible_col] == 3) & (df[algorithm_col] == alg)].groupby(tasksets_col).size().reindex(subdirs,
-	                                                                                                            fill_value=0)
-
-	# Plot the bars with stacking
-	plt.bar(subdirs, exit_code_0, color="lightgreen", label="Schedulable - Simulated")
-	plt.bar(subdirs, exit_code_1, bottom=exit_code_0, color="lightblue", label="Schedulable - Shortcut")
-	plt.bar(subdirs, exit_code_2, bottom=exit_code_0 + exit_code_1, color="orange", label="Not Schedulable - Simulated")
-	plt.bar(subdirs, exit_code_3, bottom=exit_code_0 + exit_code_1 + exit_code_2, color="red",
-	        label="Not Schedulable - Shortcut")
-
-	# Add a title and labels
-	plt.title(f'Schedulability Analysis by Taskset for {alg}', fontsize=16)
-	plt.xlabel('Taskset', fontsize=14)
-	plt.ylabel('Number of Occurrences', fontsize=14)
-	plt.xticks(rotation=45, ha='right')
-	plt.legend(loc='upper left', fontsize=12)
-	plt.tight_layout()
-
-	# Save or show the plot
-	plt.savefig(f'../schedulability_analysis_{alg}.png')
-
-# Show all plots (optional)
+# Show all the plots
 plt.show()
