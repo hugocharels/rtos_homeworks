@@ -1,8 +1,8 @@
 use crate::{
 	models::{Job, TaskSet, TimeStep},
 	scheduler::result::SchedulabilityResult,
-	scheduler::simulator::SchedulerSimulator,
 	scheduler::scheduler::Scheduler,
+	scheduler::simulator::SchedulerSimulator,
 };
 use rayon::prelude::*;
 
