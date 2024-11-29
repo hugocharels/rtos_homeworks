@@ -1,4 +1,4 @@
-use clap::{Arg, ArgAction, Command};
+use clap::{Arg, Command};
 
 pub fn get_arg_parser() -> Command {
 	Command::new("Scheduler")
