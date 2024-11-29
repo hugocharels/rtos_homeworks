@@ -42,17 +42,18 @@ fn main() {
 		.expect("Failed to set up the global thread pool");
 
 	// Read the task set from the file
-	let taskset = read_taskset_from_file(taskset_file);
+	let mut taskset = read_taskset_from_file(taskset_file);
 
 	// Create the scheduler
 	let scheduler = Builder::new()
 		.set_version(version)
 		.set_heuristic(heuristic)
 		.set_ordering(ordering)
-		.set_workers(workers)
 		.build();
 
-	// Schedule the task set
-	// let result = scheduler.check_schedulability(taskset, cores);
-	// std::process::exit(result as i32);
+	if !scheduler.is_none() {
+		// Schedule the task set
+		let result = scheduler.unwrap().is_schedulable(&mut taskset, &cores);
+		std::process::exit(result as i32);
+	}
 }

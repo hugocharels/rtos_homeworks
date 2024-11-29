@@ -1,5 +1,18 @@
 use clap::{Arg, Command};
 
+fn validate_version(value: &str) -> Result<String, String> {
+	match value {
+		"global" | "partitioned" => Ok(value.to_string()),
+		_ => {
+			if value.parse::<usize>().is_ok() {
+				Ok(value.to_string())
+			} else {
+				Err(format!("Invalid version: '{}'. Must be 'global', 'partitioned', or a natural number.", value))
+			}
+		}
+	}
+}
+
 pub fn get_arg_parser() -> Command {
 	Command::new("Scheduler")
 		.disable_help_flag(true)
@@ -23,7 +36,7 @@ pub fn get_arg_parser() -> Command {
 				.help("The version of EDF to use (partitioned, global, or EDF(k))")
 				.required(true)
 				.value_name("VERSION")
-				.value_parser(["global", "partitioned", "k"]),
+				.value_parser(validate_version),
 		)
 		.arg(
 			Arg::new("workers")
