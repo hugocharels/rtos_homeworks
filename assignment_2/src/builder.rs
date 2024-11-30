@@ -1,16 +1,17 @@
-use crate::scheduler::edf::EDF;
-use crate::scheduler::global::Global;
-use crate::scheduler::heuristics::best_fit::BestFit;
-use crate::scheduler::heuristics::first_fit::FirstFit;
-use crate::scheduler::heuristics::next_fit::NextFit;
-use crate::scheduler::heuristics::strategy::HeuristicStrategy;
-use crate::scheduler::heuristics::worst_fit::WorstFit;
-use crate::scheduler::orderings::decreasing::Decreasing;
-use crate::scheduler::orderings::increasing::Increasing;
-use crate::scheduler::orderings::strategy::OrderingStrategy;
-use crate::scheduler::partitionned::Partitioned;
-use crate::scheduler::scheduler::Scheduler;
-
+use crate::scheduler::{
+	edf::EDF,
+	global_edf::GlobalEDF,
+	heuristics::best_fit::BestFit,
+	heuristics::first_fit::FirstFit,
+	heuristics::next_fit::NextFit,
+	heuristics::strategy::HeuristicStrategy,
+	heuristics::worst_fit::WorstFit,
+	orderings::decreasing::Decreasing,
+	orderings::increasing::Increasing,
+	orderings::strategy::OrderingStrategy,
+	partitionned::Partitioned,
+	scheduler::Scheduler,
+};
 
 #[derive(Debug)]
 pub struct Builder<'a> {
@@ -44,19 +45,16 @@ impl<'a> Builder<'a> {
 	}
 
 	pub fn build(self) -> Option<Box<dyn Scheduler>> {
-		println!("{:?}", self);
 		if self.version.is_none() { return None; }
-
 		match self.version.unwrap().as_str() {
 			"global" => {
 				if self.heuristic.is_none() || self.ordering.is_none() {
-					return Some(Box::new(Global) as Box<dyn Scheduler>);
+					return Some(Box::new(GlobalEDF) as Box<dyn Scheduler>);
 				}
 				None
 			}
 			"partitioned" => {
 				if !(self.heuristic.is_none() || self.ordering.is_none()) {
-					// TODO
 					let mut partitioned = Partitioned::new();
 					let heuristic = match self.heuristic.unwrap().as_str() {
 						"ff" => Box::new(FirstFit) as Box<dyn HeuristicStrategy>,

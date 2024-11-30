@@ -4,7 +4,6 @@ use crate::{
 	scheduler::scheduler::Scheduler,
 	scheduler::simulator::SchedulerSimulator,
 };
-use rayon::prelude::*;
 
 pub struct EDF {
 	k: u32,
@@ -17,27 +16,24 @@ impl EDF {
 }
 
 impl Scheduler for EDF {
-	fn is_schedulable(&self, task_set: &mut TaskSet, cores: &u32) -> SchedulabilityResult {
+	fn is_schedulable(&self, taskset: &mut TaskSet, cores: &u32) -> SchedulabilityResult {
+		if taskset.system_utilization() > *cores as f64 || taskset.utilization_max() > 1.0 {
+			return SchedulabilityResult::UnschedulableShortcut;
+		}
+
 		SchedulabilityResult::Unknown
 	}
 }
 
 impl SchedulerSimulator for EDF {
-	fn next_job<'a>(&'a self, queue: &'a mut Vec<Job>) -> Option<&'a mut Job> {
-		queue.par_iter_mut().min_by_key(|j| j.deadline())
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: &u32) -> Vec<&'a mut Job> {
+		// TODO
+		Vec::new()
 	}
 
-	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		let mut l = task_set.tasks().par_iter().map(|task| task.wcet()).sum::<TimeStep>();
-		loop {
-			let l_next = task_set.tasks().par_iter()
-				.map(|task| ((l as f64 / task.period() as f64).ceil() as TimeStep) * task.wcet())
-				.sum::<TimeStep>();
-			if l_next == l {
-				break;
-			}
-			l = l_next;
-		}
-		l
+
+	fn t_max(&self, taskset: &TaskSet) -> TimeStep {
+		// TODO: [O_max, O_max + 2P)
+		TimeStep::MAX
 	}
 }

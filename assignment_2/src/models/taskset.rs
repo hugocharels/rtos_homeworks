@@ -24,7 +24,11 @@ impl TaskSet {
 	}
 
 	pub fn system_utilization(&self) -> f64 {
-		self.tasks.iter().map(|t| t.utilization()).sum()
+		self.tasks.par_iter().map(|t| t.utilization()).sum()
+	}
+
+	pub fn utilization_max(&self) -> f64 {
+		self.tasks.par_iter().map(|t| t.utilization()).max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap()
 	}
 
 	pub fn len(&self) -> usize {
@@ -33,21 +37,6 @@ impl TaskSet {
 
 	pub fn tasks(&self) -> &Vec<Task> {
 		&self.tasks
-	}
-
-	pub fn hyperperiod(&self) -> TimeStep {
-		fn checked_lcm(a: TimeStep, b: TimeStep) -> Option<TimeStep> {
-			a.checked_mul(b / a.gcd(&b))
-		}
-
-		self.tasks.iter()
-			.map(|task| task.period())
-			.try_fold(1, |acc, period| checked_lcm(acc, period))
-			.unwrap_or(TimeStep::MAX)
-	}
-
-	pub fn is_implicit_deadline(&self) -> bool {
-		self.tasks.iter().all(|t| t.deadline() == t.period())
 	}
 }
 
