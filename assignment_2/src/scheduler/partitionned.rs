@@ -27,8 +27,8 @@ impl Partitioned {
 }
 
 impl Scheduler for Partitioned {
-	fn is_schedulable(&self, taskset: &mut TaskSet, cores: &u32) -> SchedulabilityResult {
-		if taskset.system_utilization() > *cores as f64 || taskset.utilization_max() > 1.0 {
+	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
 		}
 

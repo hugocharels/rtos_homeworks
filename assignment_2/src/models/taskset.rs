@@ -38,6 +38,10 @@ impl TaskSet {
 	pub fn tasks(&self) -> &Vec<Task> {
 		&self.tasks
 	}
+
+	pub fn is_implicit_deadline(&self) -> bool {
+		self.tasks.par_iter().all(|t| t.deadline() == t.period())
+	}
 }
 
 #[cfg(test)]

@@ -16,7 +16,7 @@ fn main() {
 	let cores = matches
 		.get_one::<String>("cores")
 		.expect("Number of cores is required")
-		.parse::<u32>()
+		.parse::<usize>()
 		.expect("Invalid number for cores");
 
 	let version = matches.get_one::<String>("version").expect("Version is required");
@@ -24,8 +24,8 @@ fn main() {
 	// Default workers to the number of logical cores if not provided
 	let workers = matches
 		.get_one::<String>("workers")
-		.map(|w| w.parse::<u32>().expect("Invalid number for workers"))
-		.unwrap_or_else(|| num_cpus::get() as u32);
+		.map(|w| w.parse::<usize>().expect("Invalid number for workers"))
+		.unwrap_or_else(|| num_cpus::get());
 
 	let heuristic = matches.get_one::<String>("heuristic");
 	let ordering = matches.get_one::<String>("ordering");
@@ -44,6 +44,8 @@ fn main() {
 	// Read the task set from the file
 	let mut taskset = read_taskset_from_file(taskset_file);
 
+	// println!("", taskset.is);
+
 	// Create the scheduler
 	let scheduler = Builder::new()
 		.set_version(version)
@@ -53,7 +55,7 @@ fn main() {
 
 	if !scheduler.is_none() {
 		// Schedule the task set
-		let result = scheduler.unwrap().is_schedulable(&mut taskset, &cores);
+		let result = scheduler.unwrap().is_schedulable(&mut taskset, cores);
 		std::process::exit(result as i32);
 	}
 }

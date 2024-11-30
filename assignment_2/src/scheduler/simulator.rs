@@ -6,15 +6,20 @@ use rayon::prelude::*;
 
 
 pub trait SchedulerSimulator {
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: &u32) -> Vec<&'a mut Job>;
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job>;
 
-	fn t_max(&self, task_set: &TaskSet) -> TimeStep;
+	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
+		// TODO: [O_max, O_max + 2P)
+		// task_set.hyperperiod()
+		1_000_000
+	}
 
-	fn simulate(&self, task_set: &mut TaskSet, cores: &u32) -> Result<(), SchedulingError> {
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
 		let mut queue = vec![];
 		let t_max = self.t_max(task_set);
 
 		for t in 0..t_max {
+
 			// Release new jobs in parallel
 			queue.par_extend(task_set.release_jobs(t));
 
@@ -28,10 +33,10 @@ pub trait SchedulerSimulator {
 			}
 
 			// Get up to `cores` jobs to schedule
-			let scheduled_jobs = self.next_jobs(&mut queue, cores);
+			let mut scheduled_jobs = self.next_jobs(&mut queue, cores);
 
 			// Simulate the execution of scheduled jobs in parallel
-			scheduled_jobs.par_iter().for_each(|mut job| job.schedule(1));
+			scheduled_jobs.par_iter_mut().for_each(|job| job.schedule(1));
 
 			// Filter out completed jobs in parallel and create a new queue
 			queue = queue

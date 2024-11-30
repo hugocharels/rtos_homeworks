@@ -1,5 +1,5 @@
 use crate::{
-	models::{Job, TaskSet, TimeStep},
+	models::{Job, TaskSet},
 	scheduler::result::SchedulabilityResult,
 	scheduler::scheduler::Scheduler,
 	scheduler::simulator::SchedulerSimulator,
@@ -16,8 +16,8 @@ impl EDF {
 }
 
 impl Scheduler for EDF {
-	fn is_schedulable(&self, taskset: &mut TaskSet, cores: &u32) -> SchedulabilityResult {
-		if taskset.system_utilization() > *cores as f64 || taskset.utilization_max() > 1.0 {
+	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
 		}
 
@@ -26,14 +26,8 @@ impl Scheduler for EDF {
 }
 
 impl SchedulerSimulator for EDF {
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: &u32) -> Vec<&'a mut Job> {
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// TODO
 		Vec::new()
-	}
-
-
-	fn t_max(&self, taskset: &TaskSet) -> TimeStep {
-		// TODO: [O_max, O_max + 2P)
-		TimeStep::MAX
 	}
 }
