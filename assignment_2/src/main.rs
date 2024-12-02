@@ -37,14 +37,12 @@ fn main() {
 
 	// Set the global thread pool to use a specific number of threads
 	ThreadPoolBuilder::new()
-		.num_threads(workers as usize)
+		.num_threads(workers)
 		.build_global()
 		.expect("Failed to set up the global thread pool");
 
 	// Read the task set from the file
 	let mut taskset = read_taskset_from_file(taskset_file);
-
-	// println!("", taskset.is);
 
 	// Create the scheduler
 	let scheduler = Builder::new()

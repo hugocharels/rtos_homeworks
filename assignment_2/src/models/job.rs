@@ -35,6 +35,10 @@ impl Job {
 	pub fn deadline(&self) -> TimeStep {
 		self.deadline
 	}
+
+	pub fn task(&self) -> &Task {
+		&self.task
+	}
 }
 
 #[cfg(test)]

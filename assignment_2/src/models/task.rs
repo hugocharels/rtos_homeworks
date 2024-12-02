@@ -8,6 +8,7 @@ pub struct Task {
 	deadline: TimeStep,
 	period: TimeStep,
 	jobs_released: u32,
+	highest_priority: bool,
 }
 
 impl Task {
@@ -25,6 +26,7 @@ impl Task {
 			deadline,
 			period,
 			jobs_released: 0,
+			highest_priority: false,
 		}
 	}
 
@@ -60,6 +62,14 @@ impl Task {
 
 	pub fn period(&self) -> TimeStep {
 		self.period
+	}
+
+	pub fn set_highest_priority(&mut self, new: bool) {
+		self.highest_priority = new;
+	}
+
+	pub fn is_highest_priority(&self) -> bool {
+		self.highest_priority
 	}
 }
 

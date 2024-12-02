@@ -75,7 +75,7 @@ impl<'a> Builder<'a> {
 				None
 			}
 			_ => {
-				let k = self.version.unwrap().parse::<u32>().unwrap();
+				let k = self.version.unwrap().parse::<usize>().unwrap();
 				if self.heuristic.is_none() || self.ordering.is_none() {
 					return Some(Box::new(EDF::new(k)) as Box<dyn Scheduler>);
 				}

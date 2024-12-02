@@ -4,14 +4,30 @@ use crate::{
 	scheduler::scheduler::Scheduler,
 	scheduler::simulator::SchedulerSimulator,
 };
+use rayon::prelude::ParallelSliceMut;
 
 pub struct EDF {
-	k: u32,
+	k: usize,
 }
 
 impl EDF {
-	pub fn new(k: u32) -> Self {
+	pub fn new(k: usize) -> Self {
 		Self { k }
+	}
+
+	fn set_k_highest_priorities(&self, taskset: &mut TaskSet) {
+		taskset.sort_by_deadline();
+		for i in 0..self.k.min(taskset.len()) {
+			taskset.set_highest_priority_on_task(i, true);
+		}
+	}
+
+	fn get_priority(&self, job: &Job) -> u32 {
+		if job.task().is_highest_priority() {
+			0
+		} else {
+			job.deadline()
+		}
 	}
 }
 
@@ -21,13 +37,22 @@ impl Scheduler for EDF {
 			return SchedulabilityResult::UnschedulableShortcut;
 		}
 
-		SchedulabilityResult::Unknown
+		// Save the first k tasks so that they have the highest priority
+		self.set_k_highest_priorities(taskset);
+
+		match self.simulate(taskset, cores) {
+			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Err(_) => SchedulabilityResult::UnschedulableSimulated,
+		}
 	}
 }
 
 impl SchedulerSimulator for EDF {
 	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
-		// TODO
-		Vec::new()
+		// Sort the queue by deadline
+		queue.par_sort_by_key(|job| self.get_priority(job));
+
+		// Return the "cores" first jobs
+		queue.iter_mut().take(cores).collect()
 	}
 }

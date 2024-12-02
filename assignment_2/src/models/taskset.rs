@@ -42,6 +42,10 @@ impl TaskSet {
 	pub fn is_implicit_deadline(&self) -> bool {
 		self.tasks.par_iter().all(|t| t.deadline() == t.period())
 	}
+
+	pub fn set_highest_priority_on_task(&mut self, idx: usize, priority: bool) {
+		self.tasks[idx].set_highest_priority(priority);
+	}
 }
 
 #[cfg(test)]
