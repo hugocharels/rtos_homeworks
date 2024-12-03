@@ -1,8 +1,10 @@
 use crate::models::TaskSet;
-use crate::scheduler::heuristics::strategy::HeuristicStrategy;
-use crate::scheduler::orderings::strategy::OrderingStrategy;
-use crate::scheduler::result::SchedulabilityResult;
-use crate::scheduler::scheduler::Scheduler;
+use crate::scheduler::{
+	heuristics::strategy::HeuristicStrategy,
+	orderings::strategy::OrderingStrategy,
+	result::SchedulabilityResult,
+	scheduler::Scheduler,
+};
 
 pub struct Partitioned {
 	heuristic: Option<Box<dyn HeuristicStrategy>>,
@@ -28,9 +30,19 @@ impl Partitioned {
 
 impl Scheduler for Partitioned {
 	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
-		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
+		if self.heuristic.is_none() || self.ordering.is_none() {
+			return SchedulabilityResult::Unknown;
+		} else if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
+		// TODO: Check if FF DU instead of false
+		} else if false && taskset.system_utilization() <= (cores + 1) as f64 / 2f64 {
+			return SchedulabilityResult::SchedulableShortcut;
 		}
+
+		// Apply the ordering strategy
+		self.ordering.as_ref().unwrap().apply_order(taskset);
+
+		// TODO: Simulate the scheduling of the task set
 
 
 		SchedulabilityResult::Unknown

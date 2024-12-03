@@ -1,5 +1,7 @@
 use crate::{
 	models::{Job, TaskSet},
+	scheduler::orderings::decreasing::Decreasing,
+	scheduler::orderings::strategy::OrderingStrategy,
 	scheduler::result::SchedulabilityResult,
 	scheduler::scheduler::Scheduler,
 	scheduler::simulator::SchedulerSimulator,
@@ -16,7 +18,8 @@ impl EDF {
 	}
 
 	fn set_k_highest_priorities(&self, taskset: &mut TaskSet) {
-		taskset.sort_by_deadline();
+		// Order by utilization
+		Decreasing.apply_order(taskset);
 		for i in 0..self.k.min(taskset.len()) {
 			taskset.set_highest_priority_on_task(i, true);
 		}
@@ -36,9 +39,12 @@ impl Scheduler for EDF {
 		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
 		}
-
 		// Save the first k tasks so that they have the highest priority
 		self.set_k_highest_priorities(taskset);
+
+		if taskset.is_implicit_deadline() && cores >= (self.k - 1) + f64::ceil(taskset.tasks()[self.k + 1].utilization() / (1.0 - taskset.tasks()[self.k].utilization())) as usize {
+			return SchedulabilityResult::SchedulableShortcut;
+		}
 
 		match self.simulate(taskset, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,

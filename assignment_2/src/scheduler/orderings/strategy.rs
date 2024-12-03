@@ -1,3 +1,5 @@
+use crate::models::TaskSet;
+
 pub trait OrderingStrategy {
-	fn something(&self);
+	fn apply_order(&self, taskset: &mut TaskSet);
 }
