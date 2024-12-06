@@ -12,6 +12,8 @@ impl Scheduler for GlobalEDF {
 	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
+		} else if cores >= taskset.len() {
+			return SchedulabilityResult::SchedulableShortcut;
 		} else if taskset.is_implicit_deadline() && taskset.system_utilization() <= cores as f64 - (cores - 1) as f64 * taskset.utilization_max() {
 			return SchedulabilityResult::SchedulableShortcut;
 		}

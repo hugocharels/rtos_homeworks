@@ -38,6 +38,8 @@ impl Scheduler for EDF {
 	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
+		} else if cores >= taskset.len() {
+			return SchedulabilityResult::SchedulableShortcut;
 		}
 		// Save the first k tasks so that they have the highest priority
 		self.set_k_highest_priorities(taskset);

@@ -34,6 +34,8 @@ impl Scheduler for Partitioned {
 			return SchedulabilityResult::Unknown;
 		} else if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
+		} else if cores >= taskset.len() {
+			return SchedulabilityResult::SchedulableShortcut;
 		// TODO: Check if FF DU instead of false
 		} else if false && taskset.system_utilization() <= (cores + 1) as f64 / 2f64 {
 			return SchedulabilityResult::SchedulableShortcut;
