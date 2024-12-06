@@ -1,10 +1,11 @@
-use crate::models::TaskSet;
+use crate::models::{Job, TaskSet};
 use crate::scheduler::{
 	heuristics::strategy::HeuristicStrategy,
 	orderings::strategy::OrderingStrategy,
 	result::SchedulabilityResult,
 	scheduler::Scheduler,
 };
+use crate::scheduler::simulator::SchedulerSimulator;
 
 pub struct Partitioned {
 	heuristic: Option<Box<dyn HeuristicStrategy>>,
@@ -43,10 +44,18 @@ impl Scheduler for Partitioned {
 
 		// Apply the ordering strategy
 		self.ordering.as_ref().unwrap().apply_order(taskset);
+		// Apply the heuristic strategy
+		self.heuristic.as_ref().unwrap().assign_cores(taskset, cores);
 
-		// TODO: Simulate the scheduling of the task set
+		match self.simulate(taskset, cores) {
+			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Err(_) => SchedulabilityResult::UnschedulableSimulated,
+		}
+	}
+}
 
-
-		SchedulabilityResult::Unknown
+impl SchedulerSimulator for Partitioned {
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+		self.heuristic.as_ref().unwrap().next_jobs(queue, cores)
 	}
 }
