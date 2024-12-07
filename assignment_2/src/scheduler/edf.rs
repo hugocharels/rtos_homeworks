@@ -56,7 +56,7 @@ impl Scheduler for EDF {
 }
 
 impl SchedulerSimulator for EDF {
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// Sort the queue by deadline
 		queue.par_sort_by_key(|job| self.get_priority(job));
 

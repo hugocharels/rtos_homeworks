@@ -1,16 +1,17 @@
 use crate::models::{Job, Task, TaskSet, TimeStep};
-use crate::scheduler::simulator::SchedulerSimulator;
 use crate::scheduler::{
 	heuristics::strategy::HeuristicStrategy,
 	orderings::strategy::OrderingStrategy,
 	result::SchedulabilityResult,
 	scheduler::Scheduler,
+	simulator::SchedulerSimulator,
 };
 
 pub struct Partitioned {
 	heuristic: Option<Box<dyn HeuristicStrategy>>,
 	ordering: Option<Box<dyn OrderingStrategy>>,
 	core_assignment: Option<Vec<Processor>>,
+	last_next_jobs: Vec<Option<Job>>,
 }
 
 #[derive(Clone)]
@@ -50,6 +51,7 @@ impl Partitioned {
 			heuristic: None,
 			ordering: None,
 			core_assignment: None,
+			last_next_jobs: Vec::new(),
 		}
 	}
 
@@ -95,7 +97,15 @@ impl Scheduler for Partitioned {
 }
 
 impl SchedulerSimulator for Partitioned {
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
-		todo!()
+	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+		if self.last_next_jobs.is_empty() {
+			self.last_next_jobs = vec![None; cores];
+		}
+		// For each processor find the next job
+		// The next job is the same as the previous one if it is still running
+		// Or the next one, or None if there is no more job assigned to the processor
+
+		// TODO: as explained just above
+		todo!("Implement the next_jobs method for Partitioned");
 	}
 }

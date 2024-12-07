@@ -27,7 +27,7 @@ impl Scheduler for GlobalEDF {
 
 
 impl SchedulerSimulator for GlobalEDF {
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// Sort the queue by deadline
 		queue.par_sort_by_key(|job| job.deadline());
 
