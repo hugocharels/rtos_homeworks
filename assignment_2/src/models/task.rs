@@ -51,6 +51,13 @@ impl Task {
 		self.wcet as f64 / self.period as f64
 	}
 
+	pub fn id(&self) -> u32 {
+		self.id
+	}
+
+	pub fn offset(&self) -> TimeStep {
+		self.offset
+	}
 
 	pub fn wcet(&self) -> TimeStep {
 		self.wcet
@@ -63,6 +70,7 @@ impl Task {
 	pub fn period(&self) -> TimeStep {
 		self.period
 	}
+
 
 	pub fn set_highest_priority(&mut self, new: bool) {
 		self.highest_priority = new;

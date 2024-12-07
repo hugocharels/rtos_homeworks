@@ -1,6 +1,7 @@
-use crate::models::{Job, TaskSet};
+use crate::models::TaskSet;
+use crate::scheduler::errors::PartitionedError;
+use crate::scheduler::partitionned::Processor;
 
 pub trait HeuristicStrategy {
-	fn assign_cores(&self, taskset: &mut TaskSet, cores: usize);
-	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job>;
+	fn assign_cores(&self, taskset: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError>;
 }

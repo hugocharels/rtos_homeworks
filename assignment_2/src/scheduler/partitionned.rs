@@ -1,15 +1,47 @@
-use crate::models::{Job, TaskSet};
+use crate::models::{Job, Task, TaskSet, TimeStep};
+use crate::scheduler::simulator::SchedulerSimulator;
 use crate::scheduler::{
 	heuristics::strategy::HeuristicStrategy,
 	orderings::strategy::OrderingStrategy,
 	result::SchedulabilityResult,
 	scheduler::Scheduler,
 };
-use crate::scheduler::simulator::SchedulerSimulator;
 
 pub struct Partitioned {
 	heuristic: Option<Box<dyn HeuristicStrategy>>,
 	ordering: Option<Box<dyn OrderingStrategy>>,
+	core_assignment: Option<Vec<Processor>>,
+}
+
+#[derive(Clone)]
+pub struct Processor {
+	utilization: TimeStep,
+	tasks: Vec<Task>,
+}
+
+impl Processor {
+	pub fn new() -> Processor {
+		Self {
+			utilization: 0,
+			tasks: Vec::new(),
+		}
+	}
+
+	pub fn does_fit(&self, task: &Task) -> bool {
+		self.utilization + task.wcet() <= task.deadline()
+	}
+
+	pub fn add_task(&mut self, task: Task) {
+		if self.tasks.is_empty() {
+			self.utilization = task.offset();
+		}
+		self.utilization += task.wcet();
+		self.tasks.push(task);
+	}
+
+	pub fn utilization(&self) -> TimeStep {
+		self.utilization
+	}
 }
 
 impl Partitioned {
@@ -17,6 +49,7 @@ impl Partitioned {
 		Self {
 			heuristic: None,
 			ordering: None,
+			core_assignment: None,
 		}
 	}
 
@@ -30,7 +63,7 @@ impl Partitioned {
 }
 
 impl Scheduler for Partitioned {
-	fn is_schedulable(&self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+	fn is_schedulable(&mut self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		if self.heuristic.is_none() || self.ordering.is_none() {
 			return SchedulabilityResult::Unknown;
 		} else if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
@@ -44,9 +77,16 @@ impl Scheduler for Partitioned {
 
 		// Apply the ordering strategy
 		self.ordering.as_ref().unwrap().apply_order(taskset);
-		// Apply the heuristic strategy
-		self.heuristic.as_ref().unwrap().assign_cores(taskset, cores);
 
+		// Apply the heuristic strategy
+		match self.heuristic.as_ref().unwrap().assign_cores(taskset, cores) {
+			Ok(processors) => {
+				self.core_assignment = Some(processors);
+			},
+			Err(_) => return SchedulabilityResult::UnschedulableSimulated,
+		}
+
+		// Simulate the scheduling
 		match self.simulate(taskset, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
@@ -56,6 +96,6 @@ impl Scheduler for Partitioned {
 
 impl SchedulerSimulator for Partitioned {
 	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
-		self.heuristic.as_ref().unwrap().next_jobs(queue, cores)
+		todo!()
 	}
 }
