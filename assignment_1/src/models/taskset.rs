@@ -1,5 +1,4 @@
 use super::{Job, Task, TimeStep};
-use num::Integer;
 use rayon::prelude::*;
 
 #[derive(Clone, Debug)]

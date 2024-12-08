@@ -1,7 +1,7 @@
 use crate::models::TaskSet;
 use crate::scheduler::errors::PartitionedError;
 use crate::scheduler::heuristics::strategy::HeuristicStrategy;
-use crate::scheduler::partitionned::Processor;
+use crate::scheduler::partitioned::Processor;
 
 pub struct FirstFit;
 

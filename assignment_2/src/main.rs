@@ -43,6 +43,7 @@ fn main() {
 
 	// Read the task set from the file
 	let mut taskset = read_taskset_from_file(taskset_file);
+	// println!("Task set: {:?}", taskset);
 
 	// Create the scheduler
 	let scheduler = Builder::new()

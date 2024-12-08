@@ -85,7 +85,10 @@ impl Scheduler for Partitioned {
 			Ok(processors) => {
 				self.core_assignment = Some(processors);
 			},
-			Err(_) => return SchedulabilityResult::UnschedulableSimulated,
+			Err(e) => {
+				println!("{:?}", e);
+				return SchedulabilityResult::UnschedulableSimulated
+			},
 		}
 
 		// Simulate the scheduling
@@ -106,6 +109,22 @@ impl SchedulerSimulator for Partitioned {
 		// Or the next one, or None if there is no more job assigned to the processor
 
 		// TODO: as explained just above
-		todo!("Implement the next_jobs method for Partitioned");
+		for (i, processor) in self.core_assignment.as_mut().unwrap().iter_mut().enumerate() {
+			let mut new_job = None;
+			if let Some(last_job) = self.last_next_jobs[i].as_mut() {
+				if !last_job.is_complete() {
+					new_job = queue.iter_mut().find(|job| job.task().id() == last_job.task().id());
+				} else {
+					todo!("Implement the case where the last job is complete");
+				}
+			} else {
+				todo!("Implement the case where the last job is None");
+			}
+
+			self.last_next_jobs[i] = new_job.cloned();
+		}
+
+		// Return the next jobs
+		self.last_next_jobs.iter_mut().map(|job| job.as_mut().unwrap()).collect()
 	}
 }

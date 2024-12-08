@@ -9,7 +9,7 @@ use crate::scheduler::{
 	orderings::decreasing::Decreasing,
 	orderings::increasing::Increasing,
 	orderings::strategy::OrderingStrategy,
-	partitionned::Partitioned,
+	partitioned::Partitioned,
 	scheduler::Scheduler,
 };
 
