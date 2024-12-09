@@ -54,12 +54,43 @@ impl Scheduler for Partitioned {
 }
 
 impl SingleCorePartitionSchedulerSimulator for Partitioned {
+
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
 		task_set.hyperperiod()
 	}
 
 	fn simulate(&self, task_set: &mut TaskSet) -> Result<(), SchedulingError> {
-		todo!()
+		let t_max = self.t_max(task_set);
+		let mut task_id = 0;
+		let mut queue = Vec::new();
+
+		for t in 0..t_max {
+			// Release jobs
+			queue.extend(task_set.release_jobs(t));
+
+			// Check for deadlines
+			if let Some(missed_job) = queue.iter().find(|job| job.deadline_missed(t)) {
+				return Err(SchedulingError::DeadlineMiss {
+					job: missed_job.clone(),
+					t,
+				});
+			}
+
+			// Schedule the job with the right task index
+			if let Some(job) = queue.iter_mut().find(|job| job.task().id() == task_id) {
+				// Schedule the job
+				job.schedule(1);
+
+				// If the job is complete, remove it from the queue and go to the next job
+				if job.is_complete() {
+					task_id = (task_id + 1) % task_set.len() as u32;
+				}
+			}
+
+			// Remove the completed jobs from the queue
+			queue.retain(|job| !job.is_complete());
+		}
+		Ok(())
 	}
 }
 
