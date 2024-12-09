@@ -51,10 +51,6 @@ impl Task {
 		self.wcet as f64 / self.period as f64
 	}
 
-	pub fn id(&self) -> u32 {
-		self.id
-	}
-
 	pub fn offset(&self) -> TimeStep {
 		self.offset
 	}

@@ -1,10 +1,12 @@
+use crate::scheduler::errors::SchedulingError;
+use crate::scheduler::simulator::SimpleMultiCoreSchedulerSimulator;
 use crate::{
 	models::{Job, TaskSet},
 	scheduler::orderings::decreasing::Decreasing,
 	scheduler::orderings::strategy::OrderingStrategy,
 	scheduler::result::SchedulabilityResult,
 	scheduler::scheduler::Scheduler,
-	scheduler::simulator::SchedulerSimulator,
+	scheduler::simulator::MultiCoreSchedulerSimulator,
 };
 use rayon::prelude::ParallelSliceMut;
 
@@ -48,14 +50,20 @@ impl Scheduler for EDF {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
 
-		match self.simulate(taskset, cores) {
+		match MultiCoreSchedulerSimulator::simulate(self, taskset, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
 		}
 	}
 }
 
-impl SchedulerSimulator for EDF {
+impl SimpleMultiCoreSchedulerSimulator for EDF {
+	fn simulate(&mut self, taskset: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
+		<Self as MultiCoreSchedulerSimulator>::simulate(self, taskset, cores)
+	}
+}
+
+impl MultiCoreSchedulerSimulator for EDF {
 	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// Sort the queue by deadline
 		queue.par_sort_by_key(|job| self.get_priority(job));

@@ -1,7 +1,6 @@
 use crate::models::TaskSet;
 use crate::scheduler::errors::PartitionedError;
-use crate::scheduler::heuristics::strategy::HeuristicStrategy;
-use crate::scheduler::partitioned::Processor;
+use crate::scheduler::heuristics::strategy::{HeuristicStrategy, Processor};
 
 pub struct BestFit;
 

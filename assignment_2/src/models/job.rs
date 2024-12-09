@@ -1,6 +1,5 @@
-use crate::models::TimeStep;
-
 use super::Task;
+use crate::models::TimeStep;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Job {
