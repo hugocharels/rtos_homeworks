@@ -19,11 +19,11 @@ impl EDF {
 		Self { k }
 	}
 
-	fn set_k_highest_priorities(&self, taskset: &mut TaskSet) {
+	fn set_k_highest_priorities(&self, task_set: &mut TaskSet) {
 		// Order by utilization
-		Decreasing.apply_order(taskset);
-		for i in 0..self.k.min(taskset.len()) {
-			taskset.set_highest_priority_on_task(i, true);
+		Decreasing.apply_order(task_set);
+		for i in 0..self.k.min(task_set.len()) {
+			task_set.set_highest_priority_on_task(i, true);
 		}
 	}
 
@@ -37,20 +37,20 @@ impl EDF {
 }
 
 impl Scheduler for EDF {
-	fn is_schedulable(&mut self, taskset: &mut TaskSet, cores: usize) -> SchedulabilityResult {
-		if taskset.system_utilization() > cores as f64 || taskset.utilization_max() > 1.0 {
+	fn is_schedulable(&mut self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+		if task_set.system_utilization() > cores as f64 || task_set.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
-		} else if cores >= taskset.len() {
+		} else if cores >= task_set.len() {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
 		// Save the first k tasks so that they have the highest priority
-		self.set_k_highest_priorities(taskset);
+		self.set_k_highest_priorities(task_set);
 
-		if taskset.is_implicit_deadline() && cores >= (self.k - 1) + f64::ceil(taskset.tasks()[self.k + 1].utilization() / (1.0 - taskset.tasks()[self.k].utilization())) as usize {
+		if task_set.is_implicit_deadline() && cores >= (self.k - 1) + f64::ceil(task_set.tasks()[self.k + 1].utilization() / (1.0 - task_set.tasks()[self.k].utilization())) as usize {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
 
-		match MultiCoreSchedulerSimulator::simulate(self, taskset, cores) {
+		match MultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
 		}
@@ -58,13 +58,13 @@ impl Scheduler for EDF {
 }
 
 impl SimpleMultiCoreSchedulerSimulator for EDF {
-	fn simulate(&mut self, taskset: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
-		<Self as MultiCoreSchedulerSimulator>::simulate(self, taskset, cores)
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
+		<Self as MultiCoreSchedulerSimulator>::simulate(self, task_set, cores)
 	}
 }
 
 impl MultiCoreSchedulerSimulator for EDF {
-	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// Sort the queue by deadline
 		queue.par_sort_by_key(|job| self.get_priority(job));
 

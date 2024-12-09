@@ -11,19 +11,19 @@ pub trait SingleCorePartitionSchedulerSimulator {
 
 
 pub trait SimpleMultiCoreSchedulerSimulator {
-	fn simulate(&mut self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError>;
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError>;
 }
 
 
 pub trait MultiCoreSchedulerSimulator: SimpleMultiCoreSchedulerSimulator {
-	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job>;
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job>;
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
 		// TODO: [O_max, O_max + 2P)
 		1_000_000.min(task_set.hyperperiod())
 	}
 
-	fn simulate(&mut self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
 		let mut queue = vec![];
 		let t_max = self.t_max(task_set);
 

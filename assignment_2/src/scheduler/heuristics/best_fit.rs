@@ -5,10 +5,10 @@ use crate::scheduler::heuristics::strategy::{HeuristicStrategy, Processor};
 pub struct BestFit;
 
 impl HeuristicStrategy for BestFit {
-	fn assign_cores(&self, taskset: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
+	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
 		// TODO: Parallelize this
 		let mut processors: Vec<Processor> = vec![Processor::new(); cores];
-		for task in taskset.tasks() {
+		for task in task_set.tasks() {
 			let mut assigned = false;
 			processors.sort_by_key(|processor| std::cmp::Reverse(processor.utilization()));
 			for processor in processors.iter_mut() {

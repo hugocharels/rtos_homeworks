@@ -7,7 +7,7 @@ impl Decreasing {}
 
 
 impl OrderingStrategy for Decreasing {
-	fn apply_order(&self, taskset: &mut TaskSet) {
-		taskset.tasks().sort_by(|a, b| b.utilization().partial_cmp(&a.utilization()).unwrap());
+	fn apply_order(&self, task_set: &mut TaskSet) {
+		task_set.mut_tasks().sort_by(|a, b| b.utilization().partial_cmp(&a.utilization()).unwrap());
 	}
 }

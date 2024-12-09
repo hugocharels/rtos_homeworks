@@ -34,8 +34,12 @@ impl TaskSet {
 		self.tasks.len()
 	}
 
-	pub fn tasks(&mut self) -> &mut Vec<Task> {
+	pub fn mut_tasks(&mut self) -> &mut Vec<Task> {
 		&mut self.tasks
+	}
+
+	pub fn tasks(&mut self) -> &Vec<Task> {
+		&self.tasks
 	}
 
 	pub fn is_implicit_deadline(&self) -> bool {

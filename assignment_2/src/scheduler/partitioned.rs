@@ -8,6 +8,7 @@ use crate::scheduler::{
 	simulator::SimpleMultiCoreSchedulerSimulator,
 	simulator::SingleCorePartitionSchedulerSimulator,
 };
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 pub struct Partitioned {
 	heuristic: Option<Box<dyn HeuristicStrategy>>,
@@ -45,7 +46,7 @@ impl Scheduler for Partitioned {
 		}
 
 		// Simulate the scheduling
-		match self.simulate(task_set, cores) {
+		match SimpleMultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
 		}
@@ -63,18 +64,21 @@ impl SingleCorePartitionSchedulerSimulator for Partitioned {
 }
 
 impl SimpleMultiCoreSchedulerSimulator for Partitioned {
-	fn simulate(&mut self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
 		// Apply the ordering strategy
 		self.ordering.as_ref().unwrap().apply_order(task_set);
 
-		let splited_taskset: Vec<TaskSet> = self.heuristic.as_ref().unwrap().get_splited_taskset(task_set, cores).map_err(|e| SchedulingError::PartitionedError(e))?;
+		let splited_taskset: Vec<TaskSet> = self.heuristic
+			.as_ref()
+			.unwrap()
+			.get_splited_taskset(task_set, cores)
+			.map_err(|e| SchedulingError::PartitionedError(e))?;
 
 		// Simulate the scheduling for each partition in parallel
-		// splited_taskset
-		// 	.into_par_iter()
-		// 	.try_for_each(|mut partition| {
-		// 		<Self as SingleCorePartitionSchedulerSimulator>::simulate(self, &mut partition)
-		// 	})
-		Ok(())
+		splited_taskset
+			.into_par_iter()
+			.try_for_each(|mut partition| {
+				<Self as SingleCorePartitionSchedulerSimulator>::simulate(self, &mut partition)
+			})
 	}
 }

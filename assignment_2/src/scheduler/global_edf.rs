@@ -22,13 +22,13 @@ impl Scheduler for GlobalEDF {
 }
 
 impl SimpleMultiCoreSchedulerSimulator for GlobalEDF {
-	fn simulate(&mut self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
+	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
 		<Self as MultiCoreSchedulerSimulator>::simulate(self, task_set, cores)
 	}
 }
 
 impl MultiCoreSchedulerSimulator for GlobalEDF {
-	fn next_jobs<'a>(&'a mut self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
+	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job> {
 		// Sort the queue by deadline
 		queue.sort_by_key(|job| job.deadline());
 

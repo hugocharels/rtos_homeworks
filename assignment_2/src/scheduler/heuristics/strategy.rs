@@ -1,12 +1,12 @@
 use crate::models::{Task, TaskSet, TimeStep};
 use crate::scheduler::errors::PartitionedError;
 
-pub trait HeuristicStrategy {
-	fn assign_cores(&self, taskset: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError>;
+pub trait HeuristicStrategy: Sync + Send {
+	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError>;
 
-	fn get_splited_taskset(&self, taskset: &mut TaskSet, cores: usize) -> Result<Vec<TaskSet>, PartitionedError> {
+	fn get_splited_taskset(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<TaskSet>, PartitionedError> {
 		// Call assign cores then create a vec of taskset where each taskset the tasks of a processor
-		let processors = self.assign_cores(taskset, cores)?;
+		let processors = self.assign_cores(task_set, cores)?;
 		let mut tasksets = Vec::new();
 		for processor in processors {
 			let new_taskset = TaskSet::new(processor.tasks().clone());

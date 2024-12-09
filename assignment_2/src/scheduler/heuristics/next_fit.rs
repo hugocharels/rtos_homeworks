@@ -5,11 +5,11 @@ use crate::scheduler::heuristics::strategy::{HeuristicStrategy, Processor};
 pub struct NextFit;
 
 impl HeuristicStrategy for NextFit {
-	fn assign_cores(&self, taskset: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
+	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
 		// TODO: Parallelize this
 		let mut processors: Vec<Processor> = vec![Processor::new(); cores];
 		let mut current_processor = 0;
-		for task in taskset.tasks() {
+		for task in task_set.tasks() {
 			let mut assigned = false;
 			for i in current_processor..processors.len() {
 				let processor = &mut processors[i];
