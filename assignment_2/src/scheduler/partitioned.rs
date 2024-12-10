@@ -77,13 +77,13 @@ impl SingleCorePartitionSchedulerSimulator for Partitioned {
 			}
 
 			// Schedule the job with the right task index
-			if let Some(job) = queue.iter_mut().find(|job| job.task().id() == task_id) {
+			if let Some(job) = queue.iter_mut().find(|job| job.task().id() == task_set.tasks()[task_id].id()) {
 				// Schedule the job
 				job.schedule(1);
 
 				// If the job is complete, remove it from the queue and go to the next job
 				if job.is_complete() {
-					task_id = (task_id + 1) % task_set.len() as u32;
+					task_id = (task_id + 1) % task_set.len();
 				}
 			}
 
