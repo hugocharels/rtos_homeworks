@@ -1,5 +1,5 @@
 use crate::scheduler::{
-	edf::EDF,
+	edfk::EDFK,
 	global_edf::GlobalEDF,
 	heuristics::best_fit::BestFit,
 	heuristics::first_fit::FirstFit,
@@ -77,7 +77,7 @@ impl<'a> Builder<'a> {
 			_ => {
 				let k = self.version.unwrap().parse::<usize>().unwrap();
 				if self.heuristic.is_none() || self.ordering.is_none() {
-					return Some(Box::new(EDF::new(k)) as Box<dyn Scheduler>);
+					return Some(Box::new(EDFK::new(k)) as Box<dyn Scheduler>);
 				}
 				None
 			}

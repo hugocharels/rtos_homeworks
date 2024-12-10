@@ -48,7 +48,10 @@ impl Scheduler for Partitioned {
 		// Simulate the scheduling
 		match SimpleMultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
-			Err(_) => SchedulabilityResult::UnschedulableSimulated,
+			Err(e) => {
+				println!("{:?}", e);
+				SchedulabilityResult::UnschedulableSimulated
+			},
 		}
 	}
 }
@@ -65,6 +68,7 @@ impl SingleCorePartitionSchedulerSimulator for Partitioned {
 		let mut queue = Vec::new();
 
 		for t in 0..t_max {
+
 			// Release jobs
 			queue.extend(task_set.release_jobs(t));
 
