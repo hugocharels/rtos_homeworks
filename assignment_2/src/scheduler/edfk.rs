@@ -37,7 +37,7 @@ impl EDFK {
 }
 
 impl Scheduler for EDFK {
-	fn is_schedulable(&mut self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+	fn is_schedulable(&self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		let k = self.k.min(task_set.len());
 		if task_set.system_utilization() > cores as f64 || task_set.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;

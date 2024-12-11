@@ -33,7 +33,7 @@ impl Partitioned {
 }
 
 impl Scheduler for Partitioned {
-	fn is_schedulable(&mut self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+	fn is_schedulable(&self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		if self.heuristic.is_none() || self.ordering.is_none() {
 			return SchedulabilityResult::Unknown;
 		} else if task_set.system_utilization() > cores as f64 || task_set.utilization_max() > 1.0 {
@@ -49,15 +49,14 @@ impl Scheduler for Partitioned {
 		match SimpleMultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
 			Err(e) => {
-				println!("{:?}", e);
+				// println!("{:?}", e);
 				SchedulabilityResult::UnschedulableSimulated
-			},
+			}
 		}
 	}
 }
 
 impl SingleCorePartitionSchedulerSimulator for Partitioned {
-
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
 		task_set.hyperperiod()
 	}

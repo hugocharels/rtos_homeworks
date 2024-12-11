@@ -2,7 +2,7 @@ use crate::models::{Task, TaskSet, TimeStep};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-pub fn read_taskset_from_file(file_path: &str) -> TaskSet {
+pub fn read_taskset_from_file(file_path: String) -> TaskSet {
 	let file = File::open(file_path).expect("Unable to open file");
 	let reader = BufReader::new(file);
 

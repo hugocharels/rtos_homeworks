@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum SchedulabilityResult {
 	SchedulableSimulated = 0,       // Exit code 0
 	SchedulableShortcut = 1,        // Exit code 1

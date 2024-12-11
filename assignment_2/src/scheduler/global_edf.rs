@@ -5,7 +5,7 @@ pub struct GlobalEDF;
 impl GlobalEDF {}
 
 impl Scheduler for GlobalEDF {
-	fn is_schedulable(&mut self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
+	fn is_schedulable(&self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult {
 		if task_set.system_utilization() > cores as f64 || task_set.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
 		} else if cores >= task_set.len() {

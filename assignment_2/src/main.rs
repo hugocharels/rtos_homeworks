@@ -5,11 +5,17 @@ mod arg_parser;
 mod models;
 mod builder;
 mod scheduler;
+mod data_generator;
+
+use crate::data_generator::generate_data;
 use arg_parser::get_arg_parser;
 use builder::Builder;
 use taskset_parser::read_taskset_from_file;
 
 fn main() {
+	generate_data();
+	return;
+
 	let matches = get_arg_parser().get_matches();
 
 	let taskset_file = matches.get_one::<String>("taskset file").expect("Task set file is required");
@@ -42,8 +48,7 @@ fn main() {
 		.expect("Failed to set up the global thread pool");
 
 	// Read the task set from the file
-	let mut task_set = read_taskset_from_file(taskset_file);
-	// println!("Task set: {:?}", taskset);
+	let mut task_set = read_taskset_from_file(taskset_file.to_string());
 
 	// Create the scheduler
 	let scheduler = Builder::new()
