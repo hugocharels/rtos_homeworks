@@ -8,14 +8,14 @@ def plot_results(csv_file):
 
 	# Convert columns to appropriate data types
 	data['workers'] = data['workers'].astype(int)
-	data['duration_us'] = data['duration_us'].astype(int)
+	data['duration'] = data['duration'].astype(int)
 
 	# Group by workers and calculate mean duration
-	mean_data = data.groupby('workers', as_index=False)['duration_us'].mean()
+	mean_data = data.groupby('workers', as_index=False)['duration'].mean()
 
 	# Plot data
 	plt.figure(figsize=(10, 6))
-	plt.plot(mean_data['workers'], mean_data['duration_us'], marker='o', label='Mean Duration')
+	plt.plot(mean_data['workers'], mean_data['duration'], marker='o', label='Mean Duration')
 
 	# Add labels and title
 	plt.xlabel('Number of Workers', fontsize=12)

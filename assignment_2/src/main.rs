@@ -13,8 +13,8 @@ use builder::Builder;
 use taskset_parser::read_taskset_from_file;
 
 fn main() {
-	generate_data();
-	return;
+	// generate_data();
+	// return;
 
 	let matches = get_arg_parser().get_matches();
 
