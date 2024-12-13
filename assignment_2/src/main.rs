@@ -7,13 +7,14 @@ mod builder;
 mod scheduler;
 mod data_generator;
 
-use crate::data_generator::generate_data;
+use crate::data_generator::*;
 use arg_parser::get_arg_parser;
 use builder::Builder;
 use taskset_parser::read_taskset_from_file;
 
 fn main() {
-	// generate_data();
+	// generate_time_paritioned_bfdu_worker();
+	// generate_result_edf();
 	// return;
 
 	let matches = get_arg_parser().get_matches();

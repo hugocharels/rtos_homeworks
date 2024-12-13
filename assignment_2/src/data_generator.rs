@@ -3,7 +3,7 @@ use crate::scheduler::result::SchedulabilityResult;
 use crate::taskset_parser::read_taskset_from_file;
 use rayon::ThreadPoolBuilder;
 
-pub fn generate_data() {
+pub fn generate_time_paritioned_bfdu_worker() {
 	// Constants
 	const TASKSETS_FOLDER: &str = "tasksets";
 	const CORES: usize = 8;
@@ -13,7 +13,7 @@ pub fn generate_data() {
 	const RUNS: usize = 100;
 
 	// Initialize CSV writer
-	let mut writer = csv::Writer::from_path("results.csv").expect("Failed to open results.csv");
+	let mut writer = csv::Writer::from_path("results_partitioned_bfdu_time_workers.csv").expect("Failed to open results_partitioned_bfdu_time_workers.csv");
 	writer.write_record(&["taskset", "workers", "result", "duration"]).expect("Failed to write CSV header");
 
 	// Create scheduler
@@ -66,7 +66,6 @@ pub fn generate_data() {
 						format!("{:.2}", mean_duration),
 					])
 					.expect("Failed to write CSV record");
-				writer.flush().expect("Failed to flush CSV writer");
 
 				// Log mean results
 				println!(
@@ -74,6 +73,44 @@ pub fn generate_data() {
 					taskset_file, worker, result as i32, mean_duration
 				);
 			}
+			writer.flush().expect("Failed to flush CSV writer");
 		}
+	}
+}
+
+
+pub fn generate_result_edf() {
+	// Constants
+	const TASKSETS_FOLDER: &str = "tasksets";
+	const CORES: usize = 8;
+	// const VERSIONS: [&str; 9] = ["global", "0", "1", "2", "3", "4", "5", "6", "7"];
+	const VERSIONS: [&str; 2] = ["global", "0"];
+
+	// Initialize CSV writer
+	let mut writer = csv::Writer::from_path("results_result_edf.csv").expect("Failed to open results_result_edf.csv");
+	writer.write_record(&["taskset", "version", "result"]).expect("Failed to write CSV header");
+
+	for taskset_entry in std::fs::read_dir(TASKSETS_FOLDER).expect("Failed to read tasksets folder") {
+		let taskset_path = taskset_entry.expect("Failed to read taskset entry").path();
+		let taskset_file = taskset_path.display().to_string();
+		let mut task_set = read_taskset_from_file(taskset_file.clone());
+
+		for version in VERSIONS.iter() {
+			if let Some(scheduler) = Builder::new()
+				.set_version(&version.to_string())
+				.build()
+			{
+				let result = scheduler.is_schedulable(&mut task_set, CORES);
+				writer
+					.write_record(&[taskset_file.clone(), version.parse().unwrap(), format!("{:?}", result as i32)])
+					.expect("Failed to write CSV record");
+
+				println!(
+					"Task set file: {}, version: {}, result: {:?}",
+					taskset_file, version, result as i32
+				);
+			}
+		}
+		writer.flush().expect("Failed to flush CSV writer");
 	}
 }

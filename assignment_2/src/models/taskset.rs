@@ -27,7 +27,11 @@ impl TaskSet {
 	}
 
 	pub fn hyperperiod(&self) -> TimeStep {
-		self.tasks.iter().fold(1, |acc, t| acc.lcm(&t.period()))
+		self.tasks.iter().fold(1, |acc, t| Self::checked_lcm(acc, t.period()).unwrap_or(TimeStep::MAX))
+	}
+
+	fn checked_lcm(a: TimeStep, b: TimeStep) -> Option<TimeStep> {
+		a.checked_mul(b / a.gcd(&b))
 	}
 
 	pub fn len(&self) -> usize {
