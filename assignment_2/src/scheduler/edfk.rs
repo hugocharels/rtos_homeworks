@@ -52,7 +52,7 @@ impl Scheduler for EDFK {
 		}
 
 		match MultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
-			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Ok(()) => SchedulabilityResult::Unknown,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
 		}
 	}

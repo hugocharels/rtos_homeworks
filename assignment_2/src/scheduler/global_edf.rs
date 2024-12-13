@@ -22,7 +22,7 @@ impl Scheduler for GlobalEDF {
 		Decreasing.apply_order(task_set);
 
 		match MultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
-			Ok(()) => SchedulabilityResult::SchedulableSimulated,
+			Ok(()) => SchedulabilityResult::Unknown,
 			Err(_) => SchedulabilityResult::UnschedulableSimulated,
 		}
 	}

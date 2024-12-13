@@ -83,8 +83,8 @@ pub fn generate_result_edf() {
 	// Constants
 	const TASKSETS_FOLDER: &str = "tasksets";
 	const CORES: usize = 8;
-	// const VERSIONS: [&str; 9] = ["global", "0", "1", "2", "3", "4", "5", "6", "7"];
-	const VERSIONS: [&str; 2] = ["global", "0"];
+	const VERSIONS: [&str; 9] = ["global", "0", "1", "2", "3", "4", "5", "6", "7"];
+	// const VERSIONS: [&str; 2] = ["global", "0"];
 
 	// Initialize CSV writer
 	let mut writer = csv::Writer::from_path("results_result_edf.csv").expect("Failed to open results_result_edf.csv");
