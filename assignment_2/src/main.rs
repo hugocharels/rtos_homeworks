@@ -14,7 +14,8 @@ use taskset_parser::read_taskset_from_file;
 
 fn main() {
 	// generate_time_paritioned_bfdu_worker();
-	// generate_result_edf();
+	// generate_result_partitioned();
+	generate_result_edf();
 	// return;
 
 	let matches = get_arg_parser().get_matches();

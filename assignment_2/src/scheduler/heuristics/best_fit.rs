@@ -6,7 +6,6 @@ pub struct BestFit;
 
 impl HeuristicStrategy for BestFit {
 	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
-		// TODO: Parallelize this
 		let mut processors: Vec<Processor> = vec![Processor::new(); cores];
 		for task in task_set.tasks() {
 			let mut assigned = false;

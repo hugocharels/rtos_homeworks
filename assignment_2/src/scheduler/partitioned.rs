@@ -38,10 +38,7 @@ impl Scheduler for Partitioned {
 			return SchedulabilityResult::Unknown;
 		} else if task_set.system_utilization() > cores as f64 || task_set.utilization_max() > 1.0 {
 			return SchedulabilityResult::UnschedulableShortcut;
-		} else if cores >= task_set.len() {
-			return SchedulabilityResult::SchedulableShortcut;
-		// TODO: Check if FF DU instead of false
-		} else if false && task_set.system_utilization() <= (cores + 1) as f64 / 2f64 {
+		} else if task_set.is_implicit_deadline() && self.heuristic.as_ref().unwrap().is_ff() && self.ordering.as_ref().unwrap().is_du() && task_set.system_utilization() <= (cores + 1) as f64 / 2f64 {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
 

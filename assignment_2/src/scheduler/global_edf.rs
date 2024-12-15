@@ -1,7 +1,5 @@
 use crate::models::{Job, TaskSet};
 use crate::scheduler::{errors::SchedulingError, result::SchedulabilityResult, scheduler::Scheduler, simulator::{MultiCoreSchedulerSimulator, SimpleMultiCoreSchedulerSimulator}};
-use crate::scheduler::orderings::decreasing::Decreasing;
-use crate::scheduler::orderings::strategy::OrderingStrategy;
 
 pub struct GlobalEDF;
 
@@ -16,10 +14,6 @@ impl Scheduler for GlobalEDF {
 		} else if task_set.is_implicit_deadline() && task_set.system_utilization() <= cores as f64 - (cores - 1) as f64 * task_set.utilization_max() {
 			return SchedulabilityResult::SchedulableShortcut;
 		}
-
-		// Sort the task set by decreasing order
-		// So that when two jobs have the same deadline, the one with the highest utilization is selected first
-		Decreasing.apply_order(task_set);
 
 		match MultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::Unknown,

@@ -6,7 +6,6 @@ pub struct NextFit;
 
 impl HeuristicStrategy for NextFit {
 	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
-		// TODO: Parallelize this
 		let mut processors: Vec<Processor> = vec![Processor::new(); cores];
 		let mut current_processor = 0;
 		for task in task_set.tasks() {

@@ -6,10 +6,7 @@ pub struct FirstFit;
 
 impl HeuristicStrategy for FirstFit {
 	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError> {
-		// TODO: Parallelize this
 		let mut processors: Vec<Processor> = vec![Processor::new(); cores];
-		// For each task and for each processor
-		// If the tasks fits in the processor, assign it
 		for task in task_set.tasks() {
 			let mut assigned = false;
 			for processor in processors.iter_mut() {
@@ -24,5 +21,9 @@ impl HeuristicStrategy for FirstFit {
 			}
 		}
 		Ok(processors)
+	}
+
+	fn is_ff(&self) -> bool {
+		true
 	}
 }

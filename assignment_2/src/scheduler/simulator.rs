@@ -19,8 +19,7 @@ pub trait MultiCoreSchedulerSimulator: SimpleMultiCoreSchedulerSimulator {
 	fn next_jobs<'a>(&'a self, queue: &'a mut Vec<Job>, cores: usize) -> Vec<&'a mut Job>;
 
 	fn t_max(&self, task_set: &TaskSet) -> TimeStep {
-		// TODO: [O_max, O_max + 2P)
-		100_000.min(task_set.hyperperiod())
+		1_000_000.min(task_set.hyperperiod())
 	}
 
 	fn simulate(&self, task_set: &mut TaskSet, cores: usize) -> Result<(), SchedulingError> {
