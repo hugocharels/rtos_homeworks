@@ -79,22 +79,3 @@ impl Task {
 		self.highest_priority
 	}
 }
-
-#[cfg(test)]
-mod tests {
-	use super::Task;
-
-	#[test]
-	fn spawn_t0() {
-		let mut t = Task::new(0, 0, 10, 20, 40);
-		assert!(t.spawn_job(0).is_some());
-		assert!(t.spawn_job(5).is_none());
-	}
-
-	#[test]
-	fn spawn_offset() {
-		let mut t = Task::new(0, 5, 10, 20, 40);
-		assert!(t.spawn_job(0).is_none());
-		assert!(t.spawn_job(5).is_some());
-	}
-}

@@ -1,5 +1,7 @@
-use crate::models::TaskSet;
-use crate::scheduler::orderings::strategy::OrderingStrategy;
+use crate::{
+	models::TaskSet,
+	scheduler::orderings::strategy::OrderingStrategy,
+};
 
 pub struct Increasing;
 

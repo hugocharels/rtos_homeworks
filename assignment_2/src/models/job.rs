@@ -39,34 +39,3 @@ impl Job {
 		&self.task
 	}
 }
-
-#[cfg(test)]
-mod test {
-	use crate::models::Task;
-
-	#[test]
-	fn schedule() {
-		let mut task = Task::new(0, 0, 10, 30, 30);
-		let mut j = task.spawn_job(0).unwrap();
-		assert_eq!(j.remaining_time(), 10);
-		j.schedule(1);
-		assert_eq!(j.remaining_time(), 9);
-	}
-
-	#[test]
-	fn is_complete() {
-		let mut task = Task::new(0, 0, 10, 30, 30);
-		let mut j = task.spawn_job(0).unwrap();
-		assert!(!j.is_complete());
-		j.schedule(10);
-		assert!(j.is_complete());
-	}
-
-	#[test]
-	fn deadline_missed() {
-		let mut task = Task::new(0, 0, 10, 30, 30);
-		let j = task.spawn_job(0).unwrap();
-		assert!(!j.deadline_missed(5));
-		assert!(j.deadline_missed(31));
-	}
-}

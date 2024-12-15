@@ -1,5 +1,7 @@
-use crate::models::TaskSet;
-use crate::scheduler::result::SchedulabilityResult;
+use crate::{
+	models::TaskSet,
+	scheduler::result::SchedulabilityResult,
+};
 
 pub trait Scheduler: Send + Sync {
 	fn is_schedulable(&self, task_set: &mut TaskSet, cores: usize) -> SchedulabilityResult;

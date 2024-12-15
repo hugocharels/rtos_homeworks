@@ -7,17 +7,12 @@ mod builder;
 mod scheduler;
 mod data_generator;
 
-use crate::data_generator::*;
 use arg_parser::get_arg_parser;
 use builder::Builder;
 use taskset_parser::read_taskset_from_file;
+// use crate::data_generator::*; // If you want to generate some data for plots
 
 fn main() {
-	// generate_time_paritioned_bfdu_worker();
-	// generate_result_partitioned();
-	generate_result_edf();
-	// return;
-
 	let matches = get_arg_parser().get_matches();
 
 	let taskset_file = matches.get_one::<String>("taskset file").expect("Task set file is required");

@@ -1,6 +1,10 @@
-use crate::models::TaskSet;
-use crate::scheduler::errors::PartitionedError;
-use crate::scheduler::heuristics::strategy::{HeuristicStrategy, Processor};
+use crate::{
+	models::TaskSet,
+	scheduler::{
+		errors::PartitionedError,
+		heuristics::strategy::{HeuristicStrategy, Processor},
+	},
+};
 
 pub struct FirstFit;
 

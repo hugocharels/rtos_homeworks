@@ -1,5 +1,10 @@
 use crate::models::{Job, TaskSet};
-use crate::scheduler::{errors::SchedulingError, result::SchedulabilityResult, scheduler::Scheduler, simulator::{MultiCoreSchedulerSimulator, SimpleMultiCoreSchedulerSimulator}};
+use crate::scheduler::{
+	errors::SchedulingError,
+	result::SchedulabilityResult,
+	scheduler::Scheduler,
+	simulator::{MultiCoreSchedulerSimulator, SimpleMultiCoreSchedulerSimulator},
+};
 
 pub struct GlobalEDF;
 

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 
@@ -102,55 +103,92 @@ def plot_result_edf(csv_file):
 	# Read the CSV file
 	data = pd.read_csv(csv_file)
 
-	# Convert columns to appropriate data types
+	# Convert 'result' column to integer
 	data['result'] = data['result'].astype(int)
 
-	# Ensure "global" version appears first
-	data['version'] = pd.Categorical(data['version'], categories=['global'] + sorted(set(data['version']) - {'global'}),
-	                                 ordered=True)
+	# Categorize results
+	data['Category'] = data['result'].apply(lambda x: 'Schedulable' if x in (0, 1)
+	else 'Unschedulable' if x in (2, 3)
+	else 'Undetermined')
 
-	# Replace numeric versions with "EDF(number)"
-	data['version'] = data['version'].apply(lambda v: f"EDF({v})" if v.isdigit() else v)
+	# Modify 'version' column to label EDF(number) correctly
+	data['Version_Label'] = data['version'].apply(lambda x: 'EDF(' + str(x) + ')' if str(x).isdigit() else str(x))
 
-	# Group by version and result, summing the tasksets
-	grouped_data = data.groupby(['version', 'result']).size().unstack(fill_value=0)
+	# Group data by Version_Label and Category
+	grouped_data = data.groupby(['Version_Label', 'Category']).size().unstack(fill_value=0)
 
-	# Reorder columns to match the result order
-	grouped_data = grouped_data[[1, 2, 3, 4]]
+	# Calculate total per version and percentages
+	grouped_data['Total'] = grouped_data.sum(axis=1)
+	for col in ['Schedulable', 'Unschedulable', 'Undetermined']:
+		grouped_data[col + '_Percent'] = grouped_data[col] / grouped_data['Total'] * 100
 
-	# Define the colors and labels
-	result_colors = ["blue", "red", "purple", "grey"]
-	result_labels = [
-		'Schedulable (sufficient condition met)',
-		'Not schedulable (simulation required)',
-		'Not schedulable (necessary condition fails)',
-		'Cannot determine'
-	]
+	# Sort versions for better visualization
+	grouped_data.sort_values(by='Schedulable_Percent', ascending=False, inplace=True)
 
-	# Plot data with custom colors and adjusted bar spacing
-	ax = grouped_data.plot(
-		kind='bar',
-		stacked=True,
-		figsize=(10, 6),
-		color=result_colors,
-		width=1
-	)
+	# Plot settings
+	x_labels = grouped_data.index
+	x = np.arange(len(x_labels))
+	width = 0.6
 
-	# Rotate x-axis labels if space permits
-	if len(grouped_data.index) < 10:  # Arbitrary threshold for label density
-		ax.set_xticklabels(grouped_data.index, rotation=0, ha='center')
-	else:
-		ax.set_xticklabels(grouped_data.index, rotation=45, ha='right')
+	# Create 3 bar plots for Schedulable, Unschedulable, and Undetermined percentages
+	fig, axes = plt.subplots(3, 1, figsize=(10, 15), sharex=True)
 
-	# Add labels and title
+	# Schedulable Plot
+	axes[0].bar(x, grouped_data['Schedulable_Percent'], color='green', alpha=0.7, label='Schedulable')
+	axes[0].set_title('Schedulable Percentage per Version', fontsize=14)
+	axes[0].set_ylabel('Percentage (%)', fontsize=12)
+	axes[0].grid(axis='y', linestyle='--', alpha=0.7)
+	axes[0].legend(loc='upper left')
+
+	# Unschedulable Plot
+	unsched_bars = axes[1].bar(x, grouped_data['Unschedulable_Percent'], color='red', alpha=0.7, label='Unschedulable')
+	axes[1].set_title('Unschedulable Percentage per Version', fontsize=14)
+	axes[1].set_ylabel('Percentage (%)', fontsize=12)
+	axes[1].grid(axis='y', linestyle='--', alpha=0.7)
+	axes[1].legend(loc='upper left')
+
+	# Annotate best and worst percentages for Unschedulable
+	max_unsched = grouped_data['Unschedulable_Percent'].idxmax()
+	min_unsched = grouped_data['Unschedulable_Percent'].idxmin()
+	max_unsched_value = grouped_data['Unschedulable_Percent'].max()
+	min_unsched_value = grouped_data['Unschedulable_Percent'].min()
+	for i, bar in enumerate(unsched_bars):
+		height = bar.get_height()
+		if x_labels[i] == max_unsched:
+			axes[1].text(bar.get_x() + bar.get_width() / 2, height + 1, f'Best: {height:.1f}%',
+			             ha='center', va='bottom', fontsize=10, color='black', fontweight='bold', clip_on=True)
+		if x_labels[i] == min_unsched:
+			axes[1].text(bar.get_x() + bar.get_width() / 2, height + 1, f'Worst: {height:.1f}%',
+			             ha='center', va='bottom', fontsize=10, color='black', fontweight='bold', clip_on=True)
+
+	# Undetermined Plot
+	undet_bars = axes[2].bar(x, grouped_data['Undetermined_Percent'], color='gray', alpha=0.7, label='Undetermined')
+	axes[2].set_title('Undetermined Percentage per Version', fontsize=14)
+	axes[2].set_ylabel('Percentage (%)', fontsize=12)
+	axes[2].grid(axis='y', linestyle='--', alpha=0.7)
+	axes[2].legend(loc='upper left')
+
+	# Annotate best and worst percentages for Undetermined
+	max_undet = grouped_data['Undetermined_Percent'].idxmax()
+	min_undet = grouped_data['Undetermined_Percent'].idxmin()
+	max_undet_value = grouped_data['Undetermined_Percent'].max()
+	min_undet_value = grouped_data['Undetermined_Percent'].min()
+	for i, bar in enumerate(undet_bars):
+		height = bar.get_height()
+		if x_labels[i] == max_undet:
+			axes[2].text(bar.get_x() + bar.get_width() / 2, height + 1, f'Best: {height:.1f}%',
+			             ha='center', va='bottom', fontsize=10, color='black', fontweight='bold', clip_on=True)
+		if x_labels[i] == min_undet:
+			axes[2].text(bar.get_x() + bar.get_width() / 2, height + 1, f'Worst: {height:.1f}%',
+			             ha='center', va='bottom', fontsize=10, color='black', fontweight='bold', clip_on=True)
+
+	# Set x-axis labels
+	plt.xticks(x, x_labels, rotation=45, ha='right', fontsize=10)
 	plt.xlabel('Version', fontsize=12)
-	plt.ylabel('Count of Tasksets', fontsize=12)
-	plt.title('Taskset Results by Version', fontsize=14)
 
-	# Add legend with descriptive labels
-	plt.legend(title='Result', labels=result_labels, fontsize=10)
-	plt.tight_layout()
-	plt.savefig('taskset_results_by_version.png')
+	# Adjust layout
+	plt.tight_layout(rect=[0, 0, 1, 1])
+	plt.savefig('success_rate_by_edf_version.png')
 
 
 # Call the function with your CSV file path

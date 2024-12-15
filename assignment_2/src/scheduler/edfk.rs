@@ -1,12 +1,12 @@
-use crate::scheduler::errors::SchedulingError;
-use crate::scheduler::simulator::SimpleMultiCoreSchedulerSimulator;
 use crate::{
 	models::{Job, TaskSet},
-	scheduler::orderings::decreasing::Decreasing,
-	scheduler::orderings::strategy::OrderingStrategy,
-	scheduler::result::SchedulabilityResult,
-	scheduler::scheduler::Scheduler,
-	scheduler::simulator::MultiCoreSchedulerSimulator,
+	scheduler::{
+		errors::SchedulingError,
+		orderings::{decreasing::Decreasing, strategy::OrderingStrategy},
+		result::SchedulabilityResult,
+		scheduler::Scheduler,
+		simulator::{MultiCoreSchedulerSimulator, SimpleMultiCoreSchedulerSimulator},
+	},
 };
 use rayon::prelude::ParallelSliceMut;
 

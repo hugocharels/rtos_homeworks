@@ -1,8 +1,11 @@
-use crate::builder::Builder;
-use crate::scheduler::result::SchedulabilityResult;
-use crate::taskset_parser::read_taskset_from_file;
+use crate::{
+	builder::Builder,
+	scheduler::result::SchedulabilityResult,
+	taskset_parser::read_taskset_from_file,
+};
 use rayon::ThreadPoolBuilder;
 
+#[allow(dead_code)]
 pub fn generate_time_paritioned_bfdu_worker() {
 	// Constants
 	const TASKSETS_FOLDER: &str = "tasksets";
@@ -68,16 +71,17 @@ pub fn generate_time_paritioned_bfdu_worker() {
 					.expect("Failed to write CSV record");
 
 				// Log mean results
-				println!(
-					"Task set file: {}, workers: {}, mean result: {:?}, mean duration: {:.2}µs",
-					taskset_file, worker, result as i32, mean_duration
-				);
+				// println!(
+				// 	"Task set file: {}, workers: {}, mean result: {:?}, mean duration: {:.2}µs",
+				// 	taskset_file, worker, result as i32, mean_duration
+				// );
 			}
 			writer.flush().expect("Failed to flush CSV writer");
 		}
 	}
 }
 
+#[allow(dead_code)]
 pub fn generate_result_partitioned() {
 	const TASKSETS_FOLDER: &str = "tasksets";
 	const CORES: usize = 8;
@@ -118,6 +122,7 @@ pub fn generate_result_partitioned() {
 	}
 }
 
+#[allow(dead_code)]
 pub fn generate_result_edf() {
 	// Constants
 	const TASKSETS_FOLDER: &str = "tasksets";

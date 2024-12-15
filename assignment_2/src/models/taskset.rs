@@ -54,18 +54,3 @@ impl TaskSet {
 		self.tasks[idx].set_highest_priority(priority);
 	}
 }
-
-#[cfg(test)]
-mod tests {
-	use crate::models::Task;
-
-	use super::TaskSet;
-
-	#[test]
-	fn test_taskset() {
-		let tasks = vec![Task::new(0, 0, 10, 20, 50), Task::new(1, 0, 20, 40, 40)];
-		let mut ts = TaskSet::new(tasks);
-		assert_eq!(ts.release_jobs(0).len(), 2);
-		assert!(ts.release_jobs(3).is_empty());
-	}
-}

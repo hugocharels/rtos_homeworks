@@ -1,12 +1,13 @@
-use crate::models::{TaskSet, TimeStep};
-use crate::scheduler::{
-	errors::SchedulingError,
-	heuristics::strategy::HeuristicStrategy,
-	orderings::strategy::OrderingStrategy,
-	result::SchedulabilityResult,
-	scheduler::Scheduler,
-	simulator::SimpleMultiCoreSchedulerSimulator,
-	simulator::SingleCorePartitionSchedulerSimulator,
+use crate::{
+	models::{TaskSet, TimeStep},
+	scheduler::{
+		errors::SchedulingError,
+		heuristics::strategy::HeuristicStrategy,
+		orderings::strategy::OrderingStrategy,
+		result::SchedulabilityResult,
+		scheduler::Scheduler,
+		simulator::{SimpleMultiCoreSchedulerSimulator, SingleCorePartitionSchedulerSimulator},
+	},
 };
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -45,10 +46,7 @@ impl Scheduler for Partitioned {
 		// Simulate the scheduling
 		match SimpleMultiCoreSchedulerSimulator::simulate(self, task_set, cores) {
 			Ok(()) => SchedulabilityResult::SchedulableSimulated,
-			Err(e) => {
-				// println!("{:?}", e);
-				SchedulabilityResult::UnschedulableSimulated
-			}
+			Err(_) => { SchedulabilityResult::UnschedulableSimulated }
 		}
 	}
 }

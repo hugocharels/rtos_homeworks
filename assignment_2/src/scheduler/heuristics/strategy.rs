@@ -1,5 +1,7 @@
-use crate::models::{Task, TaskSet, TimeStep};
-use crate::scheduler::errors::PartitionedError;
+use crate::{
+	models::{Task, TaskSet, TimeStep},
+	scheduler::errors::PartitionedError,
+};
 
 pub trait HeuristicStrategy: Sync + Send {
 	fn assign_cores(&self, task_set: &mut TaskSet, cores: usize) -> Result<Vec<Processor>, PartitionedError>;

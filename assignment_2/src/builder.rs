@@ -1,14 +1,18 @@
 use crate::scheduler::{
 	edfk::EDFK,
 	global_edf::GlobalEDF,
-	heuristics::best_fit::BestFit,
-	heuristics::first_fit::FirstFit,
-	heuristics::next_fit::NextFit,
-	heuristics::strategy::HeuristicStrategy,
-	heuristics::worst_fit::WorstFit,
-	orderings::decreasing::Decreasing,
-	orderings::increasing::Increasing,
-	orderings::strategy::OrderingStrategy,
+	heuristics::{
+		best_fit::BestFit,
+		first_fit::FirstFit,
+		next_fit::NextFit,
+		strategy::HeuristicStrategy,
+		worst_fit::WorstFit,
+	},
+	orderings::{
+		decreasing::Decreasing,
+		increasing::Increasing,
+		strategy::OrderingStrategy,
+	},
 	partitioned::Partitioned,
 	scheduler::Scheduler,
 };
