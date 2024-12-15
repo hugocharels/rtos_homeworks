@@ -131,7 +131,7 @@ def plot_result_edf(csv_file):
 	width = 0.6
 
 	# Create 3 bar plots for Schedulable, Unschedulable, and Undetermined percentages
-	fig, axes = plt.subplots(3, 1, figsize=(10, 15), sharex=True)
+	fig, axes = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
 	# Schedulable Plot
 	axes[0].bar(x, grouped_data['Schedulable_Percent'], color='green', alpha=0.7, label='Schedulable')
@@ -142,6 +142,7 @@ def plot_result_edf(csv_file):
 
 	# Unschedulable Plot
 	unsched_bars = axes[1].bar(x, grouped_data['Unschedulable_Percent'], color='red', alpha=0.7, label='Unschedulable')
+	axes[1].set_ylim(0, 70)  # Set y-axis range
 	axes[1].set_title('Unschedulable Percentage per Version', fontsize=14)
 	axes[1].set_ylabel('Percentage (%)', fontsize=12)
 	axes[1].grid(axis='y', linestyle='--', alpha=0.7)
@@ -163,6 +164,7 @@ def plot_result_edf(csv_file):
 
 	# Undetermined Plot
 	undet_bars = axes[2].bar(x, grouped_data['Undetermined_Percent'], color='gray', alpha=0.7, label='Undetermined')
+	axes[2].set_ylim(0, 45)  # Set y-axis range
 	axes[2].set_title('Undetermined Percentage per Version', fontsize=14)
 	axes[2].set_ylabel('Percentage (%)', fontsize=12)
 	axes[2].grid(axis='y', linestyle='--', alpha=0.7)
@@ -183,7 +185,7 @@ def plot_result_edf(csv_file):
 			             ha='center', va='bottom', fontsize=10, color='black', fontweight='bold', clip_on=True)
 
 	# Set x-axis labels
-	plt.xticks(x, x_labels, rotation=45, ha='right', fontsize=10)
+	plt.xticks(x, x_labels, rotation=0, fontsize=10)
 	plt.xlabel('Version', fontsize=12)
 
 	# Adjust layout
